@@ -33,9 +33,14 @@ export default function Gantt() {
 
 
   const { min, max, ticks } = useMemo(() => {
-    const dates = filtered.flatMap((p) => [parseDate(p.startDate), parseDate(p.endDate)]);
+    const dates = filtered.flatMap((p) => [parseDate(p.startDate), parseDate(p.endDate)]).filter((d): d is Date => !!d);
+    if (dates.length === 0) {
+      const now = new Date();
+      return { min: new Date(now.getFullYear(), 0, 1), max: new Date(now.getFullYear() + 1, 0, 1), ticks: [] as { date: Date; label: string }[] };
+    }
     const min = new Date(Math.min(...dates.map((d) => d.getTime())));
     const max = new Date(Math.max(...dates.map((d) => d.getTime())));
+
     min.setDate(1);
     max.setMonth(max.getMonth() + 1, 1);
     const ticks: { date: Date; label: string }[] = [];
