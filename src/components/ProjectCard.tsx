@@ -52,7 +52,8 @@ export function ProjectCard({ p, index = 0 }: { p: Project; index?: number }) {
           {/* hover aurora */}
           <div className={`absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${catGlow[p.category] ?? ""} pointer-events-none`} />
           {/* video-preview surrogate strip */}
-          <div className="relative h-24 -mx-5 -mt-5 mb-4 overflow-hidden bg-gradient-to-br from-orange-50 via-white to-amber-50">
+          <div className={`relative h-24 -mx-5 -mt-5 mb-4 overflow-hidden ${catStrip[p.category] ?? ""}`}>
+            <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `hsl(var(--${CATEGORY_COLOR[p.category]}))` }} />
             <div className="absolute inset-0 grid-pattern opacity-50" />
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/10" />
             <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
