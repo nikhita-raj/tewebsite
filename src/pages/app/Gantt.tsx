@@ -109,8 +109,9 @@ export default function Gantt() {
 
         <div className="max-h-[70vh] overflow-y-auto">
           {filtered.map((p, i) => {
-            const s = parseDate(p.startDate); const e = parseDate(p.endDate);
+            const s = parseDate(p.startDate)!; const e = parseDate(p.endDate)!;
             const left = posPct(s); const width = Math.max(2, posPct(e) - left);
+
             return (
               <div key={p.id} className="grid grid-cols-[260px_1fr] border-b border-border/60 hover:bg-muted/30 transition">
                 <Link to={`/projects/${p.id}`} className="px-4 py-3 truncate text-sm hover:text-primary">
