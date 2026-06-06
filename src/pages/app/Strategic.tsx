@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { projects } from "@/data/projects";
 import { formatShort } from "@/components/ProjectCard";
+import { StrategyCurveChart } from "@/components/StrategyCurveChart";
 
 const stages = [
   { key: "Current State", year: "FY25", desc: "Manual, fragmented workflows across regions." },
