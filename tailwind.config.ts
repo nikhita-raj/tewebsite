@@ -57,6 +57,18 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
+        viz: {
+          ai: "hsl(var(--viz-ai))",
+          automation: "hsl(var(--viz-automation))",
+          analytics: "hsl(var(--viz-analytics))",
+          digital: "hsl(var(--viz-digital))",
+          5: "hsl(var(--viz-5))",
+          6: "hsl(var(--viz-6))",
+          7: "hsl(var(--viz-7))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
