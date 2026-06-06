@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { projects } from "@/data/projects";
 import { formatShort } from "@/components/ProjectCard";
+import { StrategyCurveChart } from "@/components/StrategyCurveChart";
 
 const stages = [
   { key: "Current State", year: "FY25", desc: "Manual, fragmented workflows across regions." },
@@ -27,6 +28,12 @@ export default function Strategic() {
         <h1 className="font-display font-bold text-3xl mt-1">Transformation Journey</h1>
         <p className="text-muted-foreground mt-2 max-w-2xl">A boardroom-grade view of how we move from today's operating model to an autonomous enterprise.</p>
       </header>
+
+      <section className="mb-14">
+        <StrategyCurveChart />
+      </section>
+
+
 
       <div className="relative">
         {/* spine */}

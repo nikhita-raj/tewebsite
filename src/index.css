@@ -33,6 +33,16 @@
   --warning: 38 95% 50%;
   --info: 217 91% 55%;
 
+  /* Visualization palette — category & chart colors */
+  --viz-ai: 262 83% 62%;              /* violet */
+  --viz-automation: 25 100% 50%;      /* ember */
+  --viz-analytics: 199 89% 48%;       /* sky */
+  --viz-digital: 158 64% 42%;         /* emerald */
+  --viz-5: 340 82% 60%;               /* rose */
+  --viz-6: 45 96% 53%;                /* amber */
+  --viz-7: 217 91% 60%;               /* indigo */
+
+
   --border: 220 13% 91%;
   --input: 220 14% 96%;
   --ring: 25 100% 50%;
