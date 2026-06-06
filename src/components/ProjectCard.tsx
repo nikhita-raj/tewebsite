@@ -18,11 +18,26 @@ const priorityRing: Record<string, string> = {
 };
 
 const catGlow: Record<string, string> = {
-  AI: "from-orange-500/15 via-pink-500/10 to-transparent",
-  Automation: "from-amber-400/15 via-orange-500/10 to-transparent",
-  Analytics: "from-sky-400/15 via-orange-500/10 to-transparent",
-  "Digital Transformation": "from-violet-500/15 via-orange-500/10 to-transparent",
+  AI: "from-viz-ai/20 via-viz-ai/5 to-transparent",
+  Automation: "from-viz-automation/20 via-viz-automation/5 to-transparent",
+  Analytics: "from-viz-analytics/20 via-viz-analytics/5 to-transparent",
+  "Digital Transformation": "from-viz-digital/20 via-viz-digital/5 to-transparent",
 };
+
+export const CATEGORY_COLOR: Record<string, string> = {
+  AI: "viz-ai",
+  Automation: "viz-automation",
+  Analytics: "viz-analytics",
+  "Digital Transformation": "viz-digital",
+};
+
+const catStrip: Record<string, string> = {
+  AI: "bg-gradient-to-br from-viz-ai/15 via-background to-viz-5/10",
+  Automation: "bg-gradient-to-br from-viz-automation/15 via-background to-viz-6/10",
+  Analytics: "bg-gradient-to-br from-viz-analytics/15 via-background to-viz-7/10",
+  "Digital Transformation": "bg-gradient-to-br from-viz-digital/15 via-background to-viz-analytics/10",
+};
+
 
 export function ProjectCard({ p, index = 0 }: { p: Project; index?: number }) {
   return (
