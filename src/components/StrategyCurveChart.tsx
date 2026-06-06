@@ -15,7 +15,7 @@ const series: { key: string; label: string; color: string; values: number[] }[] 
   { key: "analytics",   label: "Analytics & Insight", color: "var(--viz-analytics)", values: [2, 3, 4, 4, 4] },
   { key: "ai",          label: "AI / ML",           color: "var(--viz-ai)",         values: [1, 2, 4, 5, 4] },
   { key: "agentic",     label: "Agentic AI",        color: "var(--viz-digital)",    values: [1, 1, 2, 4, 5] },
-  { key: "human",       label: "Human Oversight",   color: "var(--viz-7))".replace("))",")"), values: [5, 4, 4, 3, 3] },
+  { key: "human",       label: "Human Oversight",   color: "var(--viz-7)",          values: [5, 4, 4, 3, 3] },
 ];
 
 export function StrategyCurveChart() {
