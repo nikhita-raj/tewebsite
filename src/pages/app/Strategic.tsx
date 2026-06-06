@@ -29,6 +29,12 @@ export default function Strategic() {
         <p className="text-muted-foreground mt-2 max-w-2xl">A boardroom-grade view of how we move from today's operating model to an autonomous enterprise.</p>
       </header>
 
+      <section className="mb-14">
+        <StrategyCurveChart />
+      </section>
+
+
+
       <div className="relative">
         {/* spine */}
         <div className="absolute left-6 lg:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-primary/40 to-transparent" />
