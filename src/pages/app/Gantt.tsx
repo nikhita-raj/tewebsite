@@ -12,8 +12,10 @@ const catColor: Record<ProjectCategory, string> = {
   "Digital Transformation": "from-violet-500 to-orange-400",
 };
 
-function parseDate(s: string) {
+function parseDate(s: string | null | undefined) {
+  if (!s) return null;
   const [y, m, d] = s.split("/").map(Number);
+  if (!y) return null;
   return new Date(y, (m || 1) - 1, d || 1);
 }
 
@@ -23,15 +25,22 @@ export default function Gantt() {
   const [region, setRegion] = useState<ProjectRegion | "ALL">("ALL");
 
   const filtered = useMemo(() => projects.filter((p) => {
+    if (!parseDate(p.startDate) || !parseDate(p.endDate)) return false;
     if (cat !== "ALL" && p.category !== cat) return false;
     if (region !== "ALL" && p.region !== region) return false;
     return true;
   }), [cat, region]);
 
+
   const { min, max, ticks } = useMemo(() => {
-    const dates = filtered.flatMap((p) => [parseDate(p.startDate), parseDate(p.endDate)]);
+    const dates = filtered.flatMap((p) => [parseDate(p.startDate), parseDate(p.endDate)]).filter((d): d is Date => !!d);
+    if (dates.length === 0) {
+      const now = new Date();
+      return { min: new Date(now.getFullYear(), 0, 1), max: new Date(now.getFullYear() + 1, 0, 1), ticks: [] as { date: Date; label: string }[] };
+    }
     const min = new Date(Math.min(...dates.map((d) => d.getTime())));
     const max = new Date(Math.max(...dates.map((d) => d.getTime())));
+
     min.setDate(1);
     max.setMonth(max.getMonth() + 1, 1);
     const ticks: { date: Date; label: string }[] = [];
@@ -100,8 +109,9 @@ export default function Gantt() {
 
         <div className="max-h-[70vh] overflow-y-auto">
           {filtered.map((p, i) => {
-            const s = parseDate(p.startDate); const e = parseDate(p.endDate);
+            const s = parseDate(p.startDate)!; const e = parseDate(p.endDate)!;
             const left = posPct(s); const width = Math.max(2, posPct(e) - left);
+
             return (
               <div key={p.id} className="grid grid-cols-[260px_1fr] border-b border-border/60 hover:bg-muted/30 transition">
                 <Link to={`/projects/${p.id}`} className="px-4 py-3 truncate text-sm hover:text-primary">

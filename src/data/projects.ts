@@ -7,7 +7,7 @@ export interface Project {
   id: string; name: string; pm: string; region: ProjectRegion; bu: string;
   category: ProjectCategory; team: string; area: string;
   weeklyHours: number; annualSavings: number; fteSavings: number;
-  startDate: string; endDate: string; status: ProjectStatus; priority: ProjectPriority;
+  startDate: string | null; endDate: string | null; status: ProjectStatus; priority: ProjectPriority;
   scalable: boolean; brdStatus: string; fddStatus: string;
 }
 
