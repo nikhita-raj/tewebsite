@@ -2,11 +2,14 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 import { projects, categories, regions, type ProjectCategory, type ProjectRegion, type ProjectStatus, type ProjectPriority } from "@/data/projects";
 import { ProjectCard, CATEGORY_COLOR } from "@/components/ProjectCard";
 
 const statuses: ProjectStatus[] = ["Live", "In Progress", "In Discovery", "Planned"];
 const priorities: ProjectPriority[] = ["Critical", "High", "Medium", "Standard"];
+
+const HOURS_MAX = Math.ceil(Math.max(...projects.map((p) => p.weeklyHours)) / 50) * 50;
 
 type AnyFilter = string;
 
@@ -19,6 +22,7 @@ export default function Library() {
   const [regs, setRegs] = useState<Set<ProjectRegion>>(new Set());
   const [stats, setStats] = useState<Set<ProjectStatus>>(new Set());
   const [prios, setPrios] = useState<Set<ProjectPriority>>(new Set());
+  const [hours, setHours] = useState<[number, number]>([0, HOURS_MAX]);
 
   const toggle = <T extends AnyFilter>(set: Set<T>, val: T, setFn: (s: Set<T>) => void) => {
     const n = new Set(set);
@@ -32,15 +36,18 @@ export default function Library() {
       if (regs.size && !regs.has(p.region)) return false;
       if (stats.size && !stats.has(p.status)) return false;
       if (prios.size && !prios.has(p.priority)) return false;
+      if (p.weeklyHours < hours[0] || p.weeklyHours > hours[1]) return false;
       if (q && !(`${p.name} ${p.pm} ${p.team} ${p.bu}`).toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
-  }, [cats, regs, stats, prios, q]);
+  }, [cats, regs, stats, prios, q, hours]);
 
-  const activeCount = cats.size + regs.size + stats.size + prios.size;
+  const hoursActive = hours[0] !== 0 || hours[1] !== HOURS_MAX;
+  const activeCount = cats.size + regs.size + stats.size + prios.size + (hoursActive ? 1 : 0);
 
   const clearAll = () => {
-    setCats(new Set()); setRegs(new Set()); setStats(new Set()); setPrios(new Set()); setParams({});
+    setCats(new Set()); setRegs(new Set()); setStats(new Set()); setPrios(new Set());
+    setHours([0, HOURS_MAX]); setQ(""); setParams({});
   };
 
   const counts = useMemo(() => {
@@ -68,7 +75,7 @@ export default function Library() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[260px,1fr] gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
         {/* LEFT FILTER SIDEBAR */}
         <aside className="lg:sticky lg:top-20 lg:self-start glass rounded-2xl p-5 space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
           <div className="flex items-center justify-between">
@@ -76,7 +83,7 @@ export default function Library() {
               <SlidersHorizontal className="w-4 h-4 text-primary" />
               <span className="font-display font-bold text-sm">Filters</span>
               {activeCount > 0 && (
-                <span className="px-1.5 py-0.5 rounded-full bg-primary text-white text-[10px] font-bold">{activeCount}</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">{activeCount}</span>
               )}
             </div>
             {activeCount > 0 && (
@@ -86,35 +93,96 @@ export default function Library() {
             )}
           </div>
 
+          {/* SEARCH */}
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
               value={q} onChange={(e) => setQ(e.target.value)}
-              placeholder="Search initiatives…"
-              className="w-full bg-muted/60 rounded-xl pl-9 pr-3 py-2 text-sm focus:outline-none focus:bg-card focus:ring-1 focus:ring-primary/40"
+              placeholder="Search initiatives, PMs, teams…"
+              className="w-full bg-muted/60 rounded-xl pl-9 pr-8 py-2 text-sm focus:outline-none focus:bg-card focus:ring-1 focus:ring-primary/40"
             />
+            {q && (
+              <button onClick={() => setQ("")} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted text-muted-foreground">
+                <X className="w-3 h-3" />
+              </button>
+            )}
           </div>
 
-          <FilterGroup label="Category">
-            {categories.map((c) => (
-              <CheckRow key={c} checked={cats.has(c)} onClick={() => toggle(cats, c, setCats)} count={counts.cat[c]} dot={`hsl(var(--${CATEGORY_COLOR[c]}))`}>{c}</CheckRow>
-            ))}
+          {/* CATEGORY CHIPS */}
+          <FilterGroup label="Category" count={cats.size}>
+            <div className="flex flex-wrap gap-1.5">
+              {categories.map((c) => {
+                const active = cats.has(c);
+                const color = `hsl(var(--${CATEGORY_COLOR[c]}))`;
+                return (
+                  <button
+                    key={c}
+                    onClick={() => toggle(cats, c, setCats)}
+                    className={`inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border text-[11px] font-medium transition ${
+                      active
+                        ? "text-foreground shadow-elev-sm"
+                        : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
+                    }`}
+                    style={active ? { background: `linear-gradient(135deg, ${color}22, ${color}10)`, borderColor: `${color}66` } : undefined}
+                  >
+                    <span className="w-2 h-2 rounded-full" style={{ background: color }} />
+                    {c}
+                    <span className="font-num text-[10px] opacity-70">{counts.cat[c] ?? 0}</span>
+                  </button>
+                );
+              })}
+            </div>
           </FilterGroup>
 
-          <FilterGroup label="Region">
-            {regions.map((r) => (
-              <CheckRow key={r} checked={regs.has(r)} onClick={() => toggle(regs, r, setRegs)} count={counts.reg[r]}>{r}</CheckRow>
-            ))}
+          {/* WEEKLY HOURS RANGE */}
+          <FilterGroup label="Weekly Hours Saved" count={hoursActive ? 1 : 0}>
+            <div className="px-1 pt-2">
+              <Slider
+                value={hours}
+                min={0}
+                max={HOURS_MAX}
+                step={10}
+                onValueChange={(v) => setHours([v[0], v[1]] as [number, number])}
+              />
+              <div className="flex items-center justify-between mt-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+                <span className="font-num text-foreground">{hours[0]}h</span>
+                <span>range</span>
+                <span className="font-num text-foreground">{hours[1]}h</span>
+              </div>
+            </div>
           </FilterGroup>
 
-          <FilterGroup label="Status">
+          {/* REGION CHIPS */}
+          <FilterGroup label="Region" count={regs.size}>
+            <div className="flex flex-wrap gap-1.5">
+              {regions.map((r) => {
+                const active = regs.has(r);
+                return (
+                  <button
+                    key={r}
+                    onClick={() => toggle(regs, r, setRegs)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium transition ${
+                      active
+                        ? "bg-primary/10 text-primary border-primary/40"
+                        : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
+                    }`}
+                  >
+                    {r}
+                    <span className="font-num text-[10px] opacity-70">{counts.reg[r] ?? 0}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </FilterGroup>
+
+          <FilterGroup label="Status" count={stats.size}>
             {statuses.map((s) => {
               const dot = s === "Live" ? "hsl(var(--success))" : s === "In Progress" ? "hsl(var(--warning))" : s === "In Discovery" ? "hsl(var(--info))" : "hsl(var(--muted-foreground))";
               return <CheckRow key={s} checked={stats.has(s)} onClick={() => toggle(stats, s, setStats)} count={counts.st[s]} dot={dot}>{s}</CheckRow>;
             })}
           </FilterGroup>
 
-          <FilterGroup label="Priority">
+          <FilterGroup label="Priority" count={prios.size}>
             {priorities.map((p) => (
               <CheckRow key={p} checked={prios.has(p)} onClick={() => toggle(prios, p, setPrios)} count={counts.pr[p]}>{p}</CheckRow>
             ))}
@@ -137,10 +205,13 @@ export default function Library() {
   );
 }
 
-function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
+function FilterGroup({ label, count, children }: { label: string; count?: number; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-2">{label}</div>
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">{label}</div>
+        {count ? <span className="text-[10px] font-num text-primary">{count}</span> : null}
+      </div>
       <div className="space-y-1">{children}</div>
     </div>
   );
