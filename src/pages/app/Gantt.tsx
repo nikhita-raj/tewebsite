@@ -12,8 +12,10 @@ const catColor: Record<ProjectCategory, string> = {
   "Digital Transformation": "from-violet-500 to-orange-400",
 };
 
-function parseDate(s: string) {
+function parseDate(s: string | null | undefined) {
+  if (!s) return null;
   const [y, m, d] = s.split("/").map(Number);
+  if (!y) return null;
   return new Date(y, (m || 1) - 1, d || 1);
 }
 
@@ -23,10 +25,12 @@ export default function Gantt() {
   const [region, setRegion] = useState<ProjectRegion | "ALL">("ALL");
 
   const filtered = useMemo(() => projects.filter((p) => {
+    if (!parseDate(p.startDate) || !parseDate(p.endDate)) return false;
     if (cat !== "ALL" && p.category !== cat) return false;
     if (region !== "ALL" && p.region !== region) return false;
     return true;
   }), [cat, region]);
+
 
   const { min, max, ticks } = useMemo(() => {
     const dates = filtered.flatMap((p) => [parseDate(p.startDate), parseDate(p.endDate)]);
