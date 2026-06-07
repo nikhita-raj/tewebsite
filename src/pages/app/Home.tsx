@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles } from "lucide-react";
+import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles, Target, Shield, Zap, Globe as GlobeIcon } from "lucide-react";
 import { ParticleTitle } from "@/components/hero/ParticleTitle";
 import { NeuralHero } from "@/components/hero/NeuralHero";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
@@ -190,6 +190,57 @@ export default function Home() {
             <InsightStat label="In Discovery" value={`${projects.filter((p) => p.status === "In Discovery").length}`} unit="initiatives" />
             <InsightStat label="Live" value={`${projects.filter((p) => p.status === "Live").length}`} unit="delivered" tone="up" />
             <InsightStat label="Scalable" value={`${projects.filter((p) => p.scalable).length}`} unit="cross-region" />
+          </div>
+        </div>
+      </section>
+
+      {/* ABOUT US */}
+      <section className="rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md relative overflow-hidden">
+        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="relative">
+          <SectionHeader eyebrow="Who We Are" title="About TE AI Transformation Hub" />
+          <div className="mt-6 grid md:grid-cols-3 gap-6">
+            <div className="rounded-2xl border border-border bg-muted/40 p-5">
+              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
+                <Target className="w-5 h-5" />
+              </div>
+              <h4 className="font-display font-bold text-lg">Our Mission</h4>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                Accelerate enterprise-wide AI, Automation, and Digital Transformation by providing a single operating system for global executives to discover, track, and scale high-impact initiatives across EMIA and AMER.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-muted/40 p-5">
+              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
+                <Zap className="w-5 h-5" />
+              </div>
+              <h4 className="font-display font-bold text-lg">What We Do</h4>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                We unify portfolio intelligence across SAP BTP, Process Mining, Planning, Analytics, and AI — giving leadership real-time visibility into value, risk, and readiness with boardroom-grade reporting.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-border bg-muted/40 p-5">
+              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
+                <Shield className="w-5 h-5" />
+              </div>
+              <h4 className="font-display font-bold text-lg">Why It Matters</h4>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+                Decisions at the speed of insight. The Hub transforms scattered project data into a strategic asset — enabling faster funding, smarter staffing, and transparent governance for every transformation dollar.
+              </p>
+            </div>
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <GlobeIcon className="w-4 h-4 text-primary" />
+              <span>Global · EMIA & AMER</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-primary" />
+              <span>Multi-functional Teams</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span>AI-First Culture</span>
+            </div>
           </div>
         </div>
       </section>
