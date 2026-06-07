@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles } from "lucide-react";
+import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles, Target, Shield, Zap } from "lucide-react";
 import { ParticleTitle } from "@/components/hero/ParticleTitle";
 import { NeuralHero } from "@/components/hero/NeuralHero";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
