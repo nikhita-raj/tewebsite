@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { projects, type ProjectCategory, type ProjectRegion } from "@/data/projects";
+import { projects, parseProjectDate, type ProjectCategory, type ProjectRegion } from "@/data/projects";
 
 type ViewMode = "Quarterly" | "Monthly" | "Yearly";
 
@@ -12,12 +12,7 @@ const catColor: Record<ProjectCategory, string> = {
   "Digital Transformation": "from-violet-500 to-orange-400",
 };
 
-function parseDate(s: string | null | undefined) {
-  if (!s) return null;
-  const [y, m, d] = s.split("/").map(Number);
-  if (!y) return null;
-  return new Date(y, (m || 1) - 1, d || 1);
-}
+const parseDate = parseProjectDate;
 
 export default function Gantt() {
   const [view, setView] = useState<ViewMode>("Quarterly");
