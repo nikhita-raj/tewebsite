@@ -931,6 +931,34 @@ const rawProjects: Project[] = [
   }
 ];
 
+/**
+ * Sanitize projects so Gantt and other consumers never receive malformed dates.
+ * Any invalid startDate/endDate is normalized to null. If both dates are valid
+ * but end is before start, both are nulled and a warning is logged.
+ */
+function sanitizeProjects(list: Project[]): Project[] {
+  return list.map((p) => {
+    const start = parseProjectDate(p.startDate);
+    const end = parseProjectDate(p.endDate);
+    let startDate: string | null = start ? p.startDate : null;
+    let endDate: string | null = end ? p.endDate : null;
+    if (p.startDate && !start) {
+      console.warn(`[projects] Invalid startDate for project ${p.id} (${p.name}): ${p.startDate}`);
+    }
+    if (p.endDate && !end) {
+      console.warn(`[projects] Invalid endDate for project ${p.id} (${p.name}): ${p.endDate}`);
+    }
+    if (start && end && end.getTime() < start.getTime()) {
+      console.warn(`[projects] endDate before startDate for project ${p.id} (${p.name}); discarding both.`);
+      startDate = null;
+      endDate = null;
+    }
+    return { ...p, startDate, endDate };
+  });
+}
+
+export const projects: Project[] = sanitizeProjects(rawProjects);
+
 export const portfolioStats = {
   activeProjects: 44,
   weeklyHoursSaved: 2960,
