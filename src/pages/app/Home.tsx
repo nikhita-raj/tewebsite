@@ -230,7 +230,7 @@ export default function Home() {
           </div>
           <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-primary" />
+              <GlobeIcon className="w-4 h-4 text-primary" />
               <span>Global · EMIA & AMER</span>
             </div>
             <div className="flex items-center gap-2">
