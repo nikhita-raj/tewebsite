@@ -11,7 +11,44 @@ export interface Project {
   scalable: boolean; brdStatus: string; fddStatus: string;
 }
 
-export const projects: Project[] = [
+/**
+ * Strictly parse a "YYYY/MM/DD" (or "YYYY-MM-DD") date string into a Date.
+ * Returns null for any null/undefined/malformed/out-of-range input.
+ * - Year must be 1900–2100
+ * - Month must be 1–12
+ * - Day must be valid for the given month/year (no overflow)
+ */
+export function parseProjectDate(input: string | null | undefined): Date | null {
+  if (input == null) return null;
+  if (typeof input !== "string") return null;
+  const trimmed = input.trim();
+  if (!trimmed) return null;
+  const match = trimmed.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+  if (!match) return null;
+  const y = Number(match[1]);
+  const m = Number(match[2]);
+  const d = Number(match[3]);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return null;
+  if (y < 1900 || y > 2100) return null;
+  if (m < 1 || m > 12) return null;
+  if (d < 1 || d > 31) return null;
+  const date = new Date(y, m - 1, d);
+  if (
+    date.getFullYear() !== y ||
+    date.getMonth() !== m - 1 ||
+    date.getDate() !== d ||
+    isNaN(date.getTime())
+  ) {
+    return null;
+  }
+  return date;
+}
+
+export function isValidProjectDate(input: string | null | undefined): boolean {
+  return parseProjectDate(input) !== null;
+}
+
+const rawProjects: Project[] = [
   {
     "id": "1",
     "name": "Block 55 (PPQ) & Block 57 (MOQ)",
