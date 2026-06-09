@@ -1,6 +1,6 @@
 export type ProjectStatus = "Live" | "In Progress" | "In Discovery" | "Planned";
 export type ProjectPriority = "Critical" | "High" | "Medium" | "Standard";
-export type ProjectRegion = "EMIA" | "AMER" | "Global";
+export type ProjectRegion = "EMIA" | "AMER" | "APAC" | "Global";
 export type ProjectCategory = "AI" | "Automation" | "Analytics" | "Digital Transformation";
 
 export interface Project {
@@ -968,4 +968,4 @@ export const portfolioStats = {
 };
 
 export const categories: ProjectCategory[] = ["AI", "Automation", "Analytics", "Digital Transformation"];
-export const regions: ProjectRegion[] = ["EMIA", "AMER", "Global"];
+export const regions: ProjectRegion[] = ["EMIA", "AMER", "APAC", "Global"];
