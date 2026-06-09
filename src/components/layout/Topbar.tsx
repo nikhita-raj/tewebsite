@@ -1,13 +1,13 @@
-import { Search, Bell, FileDown, Globe2, Activity, Home, Library, Compass, GanttChartSquare, Sparkles } from "lucide-react";
+import { Search, Bell, FileDown, Globe2, Activity, Home, Library, Compass, GanttChartSquare, Grid3x3 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const nav = [
-  { to: "/", label: "Command Center", icon: Home },
+  { to: "/", label: "Home", icon: Home },
   { to: "/library", label: "Project Library", icon: Library },
   { to: "/strategic", label: "Strategic View", icon: Compass },
   { to: "/gantt", label: "Portfolio Gantt", icon: GanttChartSquare },
-  { to: "/galaxy", label: "Transformation Galaxy", icon: Sparkles },
+  { to: "/galaxy", label: "Gartner Quadrant", icon: Grid3x3 },
 ];
 
 export function Topbar() {

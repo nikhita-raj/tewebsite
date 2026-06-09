@@ -8,66 +8,83 @@
    ============================================================ */
 
 :root {
-  /* Canvas — deep neutral black */
-  --background: 0 0% 4%;             /* #0a0a0a */
-  --foreground: 0 0% 92%;            /* near white */
-  --card: 0 0% 7%;                   /* #121212 panel */
-  --card-foreground: 0 0% 92%;
-  --popover: 0 0% 8%;
-  --popover-foreground: 0 0% 92%;
+  /* LIGHT canvas — paper & ink with crimson accent */
+  --background: 30 20% 98%;
+  --foreground: 0 0% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 10%;
 
-  /* Brand — crimson red accent */
-  --primary: 0 84% 55%;              /* #e63946 ish */
+  --primary: 0 84% 55%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 0 72% 45%;
-  --secondary-foreground: 0 0% 100%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 10%;
   --accent: 0 90% 62%;
   --accent-foreground: 0 0% 100%;
 
-  /* System */
-  --muted: 0 0% 11%;
-  --muted-foreground: 0 0% 62%;
+  --muted: 30 12% 95%;
+  --muted-foreground: 0 0% 40%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --success: 152 60% 48%;
-  --warning: 38 95% 55%;
-  --info: 199 89% 60%;
+  --success: 152 60% 42%;
+  --warning: 38 95% 50%;
+  --info: 199 89% 50%;
 
-  /* Visualization palette — keep multi-hue for charts */
-  --viz-ai: 262 83% 68%;
+  --viz-ai: 262 83% 58%;
   --viz-automation: 0 84% 55%;
-  --viz-analytics: 199 89% 58%;
-  --viz-digital: 158 64% 48%;
-  --viz-5: 340 82% 62%;
-  --viz-6: 45 96% 58%;
-  --viz-7: 217 91% 65%;
+  --viz-analytics: 199 89% 48%;
+  --viz-digital: 158 64% 42%;
+  --viz-5: 340 82% 55%;
+  --viz-6: 45 96% 50%;
+  --viz-7: 217 91% 55%;
 
-  --border: 0 0% 14%;
-  --input: 0 0% 11%;
+  --border: 30 10% 88%;
+  --input: 30 10% 92%;
   --ring: 0 84% 55%;
   --radius: 0.75rem;
 
-  /* Gradients & glows */
-  --grad-ember: linear-gradient(135deg, hsl(0 84% 55%) 0%, hsl(0 90% 62%) 50%, hsl(350 90% 60%) 100%);
-  --grad-ember-soft: linear-gradient(135deg, hsl(0 84% 55% / 0.18), hsl(0 90% 62% / 0.05));
-  --grad-aurora: radial-gradient(1200px circle at 20% -10%, hsl(0 84% 55% / 0.14), transparent 55%),
-                 radial-gradient(900px circle at 80% 10%, hsl(0 90% 50% / 0.10), transparent 60%),
-                 radial-gradient(700px circle at 50% 100%, hsl(0 60% 40% / 0.08), transparent 60%);
-  --grad-text: linear-gradient(135deg, hsl(0 0% 95%) 0%, hsl(0 90% 70%) 60%, hsl(0 84% 55%) 100%);
+  --grad-ember: linear-gradient(135deg, hsl(0 84% 55%) 0%, hsl(0 90% 62%) 50%, hsl(20 90% 60%) 100%);
+  --grad-ember-soft: linear-gradient(135deg, hsl(0 84% 55% / 0.10), hsl(0 90% 62% / 0.03));
+  --grad-aurora: radial-gradient(1200px circle at 20% -10%, hsl(0 84% 55% / 0.06), transparent 55%),
+                 radial-gradient(900px circle at 80% 10%, hsl(20 90% 50% / 0.05), transparent 60%);
+  --grad-text: linear-gradient(135deg, hsl(0 0% 10%) 0%, hsl(0 84% 45%) 60%, hsl(0 84% 55%) 100%);
 
+  --shadow-elev-sm: 0 1px 2px hsl(0 0% 0% / 0.06), 0 1px 3px hsl(0 0% 0% / 0.04);
+  --shadow-elev-md: 0 6px 22px hsl(0 0% 0% / 0.08), 0 2px 6px hsl(0 0% 0% / 0.05);
+  --shadow-elev-lg: 0 22px 60px hsl(0 0% 0% / 0.12), 0 8px 22px hsl(0 0% 0% / 0.08);
+  --shadow-ember: 0 12px 40px hsl(0 84% 55% / 0.30), 0 4px 12px hsl(0 84% 55% / 0.20);
+
+  --sidebar-background: 0 0% 100%;
+  --sidebar-foreground: 0 0% 10%;
+  --sidebar-primary: 0 84% 55%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 30 12% 95%;
+  --sidebar-accent-foreground: 0 0% 10%;
+  --sidebar-border: 30 10% 88%;
+  --sidebar-ring: 0 84% 55%;
+}
+
+/* Dark zone — apply to any wrapper that should retain the cyberpunk look */
+.dark-zone {
+  --background: 0 0% 4%;
+  --foreground: 0 0% 92%;
+  --card: 0 0% 7%;
+  --card-foreground: 0 0% 92%;
+  --popover: 0 0% 8%;
+  --popover-foreground: 0 0% 92%;
+  --muted: 0 0% 11%;
+  --muted-foreground: 0 0% 62%;
+  --border: 0 0% 14%;
+  --input: 0 0% 11%;
+  --secondary: 0 72% 45%;
+  --secondary-foreground: 0 0% 100%;
+  --grad-text: linear-gradient(135deg, hsl(0 0% 95%) 0%, hsl(0 90% 70%) 60%, hsl(0 84% 55%) 100%);
   --shadow-elev-sm: 0 1px 2px hsl(0 0% 0% / 0.4), 0 1px 3px hsl(0 0% 0% / 0.3);
   --shadow-elev-md: 0 4px 18px hsl(0 0% 0% / 0.5), 0 2px 6px hsl(0 0% 0% / 0.4);
   --shadow-elev-lg: 0 18px 50px hsl(0 0% 0% / 0.6), 0 6px 18px hsl(0 0% 0% / 0.5);
-  --shadow-ember: 0 12px 40px hsl(0 84% 55% / 0.35), 0 4px 12px hsl(0 84% 55% / 0.25);
-
-  --sidebar-background: 0 0% 5%;
-  --sidebar-foreground: 0 0% 92%;
-  --sidebar-primary: 0 84% 55%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 0 0% 10%;
-  --sidebar-accent-foreground: 0 0% 92%;
-  --sidebar-border: 0 0% 14%;
-  --sidebar-ring: 0 84% 55%;
+  color: hsl(var(--foreground));
+  background-color: hsl(var(--background));
 }
 
 @layer base {
@@ -75,18 +92,18 @@
   html { scroll-behavior: smooth; }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'JetBrains Mono', 'Inter', system-ui, sans-serif;
+    font-family: 'Manrope', system-ui, sans-serif;
     font-feature-settings: "cv02", "cv03", "cv11", "ss01";
     background-image: var(--grad-aurora);
     background-attachment: fixed;
     background-color: hsl(var(--background));
   }
-  h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
-  h5, h6 { font-family: 'Sora', sans-serif; letter-spacing: -0.01em; }
-  .font-display { font-family: 'Space Grotesk', sans-serif; }
-  .font-sub { font-family: 'Sora', sans-serif; }
-  .font-body { font-family: 'Inter', sans-serif; }
-  .font-num { font-family: 'JetBrains Mono', 'IBM Plex Sans', sans-serif; font-feature-settings: "tnum"; }
+  h1, h2, h3, h4 { font-family: 'Syncopate', 'Space Grotesk', sans-serif; letter-spacing: 0.01em; font-weight: 700; }
+  h5, h6 { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
+  .font-display { font-family: 'Syncopate', 'Space Grotesk', sans-serif; letter-spacing: 0.02em; }
+  .font-sub { font-family: 'Space Grotesk', sans-serif; }
+  .font-body { font-family: 'Manrope', sans-serif; }
+  .font-num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
   .font-mono { font-family: 'JetBrains Mono', monospace; }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
