@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles, Target, Shield, Zap, Globe as GlobeIcon } from "lucide-react";
-import { ParticleTitle } from "@/components/hero/ParticleTitle";
+// ParticleTitle replaced by glitch hero
 import { NeuralHero } from "@/components/hero/NeuralHero";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { Globe } from "@/components/Globe";
