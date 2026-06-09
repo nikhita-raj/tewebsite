@@ -93,74 +93,114 @@ export default function ImplementationRoadmap() {
 
   return (
     <div className="px-6 lg:px-10 py-8 max-w-[1600px] mx-auto">
-      {/* HEADER */}
-      <div className="mb-8">
-        <div className="flex items-end justify-between gap-4 mb-6">
-          <div>
-            <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Strategic Execution</div>
-            <h1 className="font-display font-bold text-3xl mt-1">Implementation Roadmap</h1>
-            <p className="text-sm text-muted-foreground mt-2">44 initiatives mapped across fiscal years with strategic alignment and execution timeline</p>
+      {/* HERO HEADER */}
+      <div className="mb-10 rounded-3xl bg-gradient-to-br from-primary/10 via-accent/5 to-background border border-primary/20 p-8 lg:p-10">
+        <div className="flex items-end justify-between gap-6 flex-col lg:flex-row">
+          <div className="flex-1">
+            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Strategic Execution Plan</span>
+            </div>
+            <h1 className="font-display font-bold text-4xl lg:text-5xl mt-2 leading-tight text-balance">
+              Transformation in Motion
+            </h1>
+            <p className="text-base text-muted-foreground mt-3 max-w-2xl">
+              A comprehensive portfolio of {stats.total} strategic initiatives spanning fiscal years 2025 through 2030, delivering $2.3M+ in annual value across four key capability areas.
+            </p>
           </div>
-        </div>
-
-        {/* STATS */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatCard label="Total Projects" value={String(stats.total)} icon={<CalendarRange className="w-4 h-4" />} />
-          <StatCard label="Deployed" value={String(stats.live)} accent />
-          <StatCard label="In Progress" value={String(stats.inProgress)} />
-          <StatCard label="Business Value" value={`$${formatShort(stats.value)}`} icon={<TrendingUp className="w-4 h-4" />} accent />
+          <div className="hidden lg:block text-right">
+            <div className="text-6xl font-display font-bold text-primary/20 mb-2">{stats.total}</div>
+            <p className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground font-semibold">Strategic Initiatives</p>
+          </div>
         </div>
       </div>
 
+      {/* STATS GRID */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+        <StatCard label="Total Projects" value={String(stats.total)} icon={<CalendarRange className="w-4 h-4" />} />
+        <StatCard label="Deployed" value={String(stats.live)} accent />
+        <StatCard label="In Progress" value={String(stats.inProgress)} />
+        <StatCard label="Business Value" value={`$${formatShort(stats.value)}`} icon={<TrendingUp className="w-4 h-4" />} accent />
+      </div>
+
       {/* FISCAL YEAR TIMELINE */}
-      <div className="rounded-3xl border border-border bg-card p-6 mb-8 shadow-elev-md">
-        <div className="mb-4">
-          <h2 className="font-display font-bold text-xl mb-2">Fiscal Year Timeline</h2>
-          <p className="text-sm text-muted-foreground">Projects mapped by implementation year and category</p>
+      <div className="rounded-3xl border border-border bg-card shadow-elev-md overflow-hidden mb-10">
+        {/* Timeline Header */}
+        <div className="bg-gradient-to-r from-primary/5 to-accent/5 border-b border-border p-6">
+          <h2 className="font-display font-bold text-2xl mb-1">Execution Timeline</h2>
+          <p className="text-sm text-muted-foreground">Strategic initiatives across six fiscal years with category distribution</p>
         </div>
 
-        <div className="space-y-8">
-          {FISCAL_YEARS.map((fy) => {
+        <div className="p-6 space-y-10">
+          {FISCAL_YEARS.map((fy, idx) => {
             const categories = Object.entries(groupedProjects[fy]);
             const projectCount = categories.reduce((acc, [, projects]) => acc + projects.length, 0);
+            const fyProjects = projectsWithDates.filter((pwd) => `FY${pwd.startYear % 100}` === fy);
+            const deployedInFY = fyProjects.filter((pwd) => pwd.project.status === 'Live').length;
+            const progressPercent = projectCount > 0 ? (deployedInFY / projectCount) * 100 : 0;
+            const fyStatus = fy === 'FY25' ? 'Deployed' : fy === 'FY26' || fy === 'FY27' ? 'In Progress' : 'Pipeline';
+            const bgClass = fy === 'FY25' ? 'bg-success/5 border-success/20' : fy === 'FY26' || fy === 'FY27' ? 'bg-warning/5 border-warning/20' : 'bg-muted/20 border-border';
 
             return (
-              <div key={fy} className="border-b border-border last:border-b-0 pb-8 last:pb-0">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 border border-primary/20">
-                      <span className="font-display font-bold text-lg text-primary">{fy}</span>
+              <div key={fy} className={`rounded-2xl border p-6 transition-all hover:shadow-md ${bgClass}`}>
+                <div className="flex items-start justify-between gap-6 mb-5">
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br from-primary/20 to-accent/10 border border-primary/30 flex-shrink-0">
+                      <span className="font-display font-bold text-xl text-primary">{fy.replace('FY', '')}</span>
                     </div>
-                    <div>
-                      <h3 className="font-display font-bold text-lg">{fy}</h3>
-                      <p className="text-xs text-muted-foreground">{projectCount} projects</p>
+                    <div className="flex-1">
+                      <h3 className="font-display font-bold text-lg leading-tight">{fy}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-xs font-medium text-muted-foreground">{projectCount} initiatives</p>
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wide ${
+                          fyStatus === 'Deployed' ? 'bg-success/15 text-success' :
+                          fyStatus === 'In Progress' ? 'bg-warning/15 text-warning' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {fyStatus}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="text-right text-sm text-muted-foreground">
-                    {fy === 'FY25' && '20{25} - Deployed'}
-                    {fy === 'FY26' && '2026 - In Progress'}
-                    {fy === 'FY27' && '2027 - In Progress'}
-                    {fy === 'FY28' && '2028 - Pipeline'}
-                    {fy === 'FY29' && '2029 - Pipeline'}
-                    {fy === 'FY30' && '2030 - Pipeline'}
+                  <div className="text-right flex-shrink-0">
+                    <div className="font-display font-bold text-2xl text-primary">{deployedInFY}</div>
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Deployed</p>
                   </div>
                 </div>
 
+                {/* Progress bar */}
+                {projectCount > 0 && (
+                  <div className="mb-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Execution Progress</p>
+                      <span className="text-[11px] font-semibold text-foreground">{Math.round(progressPercent)}%</span>
+                    </div>
+                    <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary to-accent rounded-full transition-all duration-500"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 {/* Projects by category */}
-                <div className="space-y-6">
+                <div className="space-y-5 border-t border-border/50 pt-5">
                   {categories.map(([category, prjs]) => (
                     prjs.length > 0 && (
-                      <div key={category}>
+                      <div key={category} className="rounded-lg bg-muted/20 p-3">
                         <div className="flex items-center gap-2 mb-3">
                           <div
-                            className="w-3 h-3 rounded-full"
+                            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                             style={{ background: CATEGORY_COLORS[category as ProjectCategory] }}
                           />
-                          <h4 className="text-sm font-semibold text-foreground">{category}</h4>
-                          <span className="text-xs text-muted-foreground ml-auto">{prjs.length} projects</span>
+                          <h4 className="text-sm font-semibold text-foreground flex-1">{category}</h4>
+                          <span className="inline-flex items-center justify-center min-w-6 h-6 rounded-full bg-muted text-[10px] font-bold text-foreground">
+                            {prjs.length}
+                          </span>
                         </div>
 
-                        <div className="space-y-2">
+                        <div className="space-y-1.5">
                           {prjs.map((pwd) => {
                             const { left, width } = getGanttPosition(pwd);
                             const statusColor =
@@ -173,35 +213,36 @@ export default function ImplementationRoadmap() {
                                     : 'hsl(var(--muted-foreground))';
 
                             return (
-                              <div key={pwd.project.id} className="flex items-center gap-3">
-                                <div className="w-48 flex-shrink-0">
-                                  <p className="text-xs font-medium text-foreground truncate" title={pwd.project.name}>
+                              <div key={pwd.project.id} className="flex items-center gap-2 group/item">
+                                <div className="w-40 flex-shrink-0">
+                                  <p className="text-[11px] font-semibold text-foreground truncate group-hover/item:text-primary transition-colors" title={pwd.project.name}>
                                     {pwd.project.name}
                                   </p>
-                                  <p className="text-xs text-muted-foreground truncate">{pwd.project.region}</p>
+                                  <p className="text-[9px] text-muted-foreground truncate">{pwd.project.region}</p>
                                 </div>
 
                                 {/* Gantt bar */}
-                                <div className="flex-1 min-h-[28px] relative bg-muted/30 rounded-md overflow-hidden">
+                                <div className="flex-1 min-h-[24px] relative bg-muted/40 rounded-md overflow-hidden group/bar">
                                   <div
-                                    className="h-full rounded-md transition-all hover:opacity-80 cursor-pointer group"
+                                    className="h-full rounded-md transition-all duration-300 hover:scale-y-125 hover:shadow-lg cursor-pointer origin-left"
                                     style={{
-                                      background: `linear-gradient(90deg, ${CATEGORY_COLORS[pwd.project.category]}, ${CATEGORY_COLORS[pwd.project.category]}dd)`,
+                                      background: `linear-gradient(90deg, ${CATEGORY_COLORS[pwd.project.category]}, ${CATEGORY_COLORS[pwd.project.category]}cc)`,
                                       left: `${left}%`,
                                       width: `${width}%`,
-                                      borderLeft: `3px solid ${statusColor}`,
+                                      borderLeft: `2.5px solid ${statusColor}`,
+                                      boxShadow: `0 0 12px ${CATEGORY_COLORS[pwd.project.category]}40`,
                                     }}
                                     title={`${pwd.project.name} - ${pwd.project.status}`}
                                   >
-                                    <div className="h-full flex items-center px-2 text-[10px] font-mono text-white opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap overflow-hidden text-ellipsis">
+                                    <div className="h-full flex items-center px-2 text-[9px] font-semibold text-white opacity-0 group-hover/bar:opacity-100 transition-opacity whitespace-nowrap overflow-hidden text-ellipsis">
                                       {pwd.project.status}
                                     </div>
                                   </div>
                                 </div>
 
-                                <div className="w-20 flex-shrink-0 text-right">
-                                  <p className="text-xs font-semibold text-foreground">${formatShort(pwd.project.annualSavings)}</p>
-                                  <p className="text-[10px] text-muted-foreground">{pwd.project.priority}</p>
+                                <div className="w-24 flex-shrink-0 text-right">
+                                  <p className="text-[11px] font-bold text-foreground">${formatShort(pwd.project.annualSavings)}</p>
+                                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{pwd.project.priority}</p>
                                 </div>
                               </div>
                             );
@@ -218,33 +259,46 @@ export default function ImplementationRoadmap() {
 
         {/* Timeline scale reference */}
         <div className="mt-8 pt-6 border-t border-border">
-          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-3">Timeline Scale</p>
-          <div className="flex justify-between text-[10px] text-muted-foreground font-mono">
-            <span>2025</span>
-            <span>2026</span>
-            <span>2027</span>
-            <span>2028</span>
-            <span>2029</span>
-            <span>2030</span>
+          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-4">Timeline Reference</p>
+          <div className="flex justify-between items-end gap-2">
+            {['2025', '2026', '2027', '2028', '2029', '2030'].map((year) => (
+              <div key={year} className="flex-1 text-center">
+                <div className="h-8 bg-gradient-to-t from-primary/10 to-transparent rounded-t mb-2" />
+                <span className="text-[10px] font-semibold text-foreground">{year}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* CATEGORY LEGEND */}
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-elev-md">
-        <h2 className="font-display font-bold text-xl mb-4">Project Categories</h2>
+      <div className="rounded-3xl border border-border bg-card p-8 shadow-elev-md">
+        <h2 className="font-display font-bold text-2xl mb-1">Project Categories</h2>
+        <p className="text-sm text-muted-foreground mb-6">Strategic initiatives organized by capability domain</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Object.entries(CATEGORY_COLORS).map(([category, color]) => (
-            <div key={category} className="flex items-center gap-3 p-3 rounded-lg bg-muted/30">
-              <div className="w-4 h-4 rounded-full" style={{ background: color }} />
-              <div>
-                <p className="text-sm font-semibold">{category}</p>
-                <p className="text-[10px] text-muted-foreground">
-                  {projectsWithDates.filter((p) => p.project.category === category).length} projects
-                </p>
+          {Object.entries(CATEGORY_COLORS).map(([category, color]) => {
+            const count = projectsWithDates.filter((p) => p.project.category === category).length;
+            return (
+              <div key={category} className="group rounded-xl border border-border/50 p-4 hover:border-primary/30 hover:bg-primary/5 transition-all">
+                <div className="flex items-start gap-3 mb-3">
+                  <div 
+                    className="w-5 h-5 rounded-lg flex-shrink-0 mt-0.5 shadow-sm"
+                    style={{ 
+                      background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+                      boxShadow: `0 0 12px ${color}40`
+                    }} 
+                  />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-foreground">{category}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="inline-block w-1 h-1 rounded-full bg-primary/40" />
+                      <p className="text-[11px] text-muted-foreground font-medium">{count} initiatives</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -253,12 +307,16 @@ export default function ImplementationRoadmap() {
 
 function StatCard({ label, value, icon, accent }: { label: string; value: string; icon?: React.ReactNode; accent?: boolean }) {
   return (
-    <div className={`rounded-2xl border p-4 ${accent ? 'border-primary/30 bg-primary/5' : 'border-border bg-card'} shadow-elev-sm`}>
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">{label}</p>
-        {icon && <span className="text-primary">{icon}</span>}
+    <div className={`rounded-2xl border p-5 transition-all hover:shadow-md group ${
+      accent 
+        ? 'border-primary/40 bg-gradient-to-br from-primary/8 to-accent/5 hover:border-primary/60' 
+        : 'border-border bg-gradient-to-br from-card to-muted/10 hover:border-primary/30'
+    }`}>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <p className="text-[9px] uppercase tracking-[0.15em] text-muted-foreground font-bold">{label}</p>
+        {icon && <span className={`transition-transform group-hover:scale-110 ${accent ? 'text-primary' : 'text-primary/60'}`}>{icon}</span>}
       </div>
-      <p className="font-display font-bold text-2xl text-foreground">{value}</p>
+      <p className="font-display font-bold text-3xl text-foreground group-hover:text-primary transition-colors">{value}</p>
     </div>
   );
 }
