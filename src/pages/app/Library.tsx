@@ -91,35 +91,7 @@ export default function Library() {
         </div>
       </div>
 
-      {/* TOP STATUS-OF-EACH-PROJECT STRIP */}
-      <div className="mb-5 rounded-2xl border border-border bg-card p-4 shadow-elev-sm">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Status snapshot</div>
-          {year && (
-            <button onClick={() => setYear(null)} className="text-[10px] uppercase tracking-widest text-primary inline-flex items-center gap-1">
-              <X className="w-3 h-3" /> Year: {year}
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {statuses.map((s) => {
-            const list = filtered.filter((p) => p.status === s);
-            const dot = s === "Live" ? "bg-emerald-500" : s === "In Progress" ? "bg-amber-500" : s === "In Discovery" ? "bg-sky-500" : "bg-slate-400";
-            return (
-              <button
-                key={s}
-                onClick={() => toggle(stats, s, setStats)}
-                className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left transition ${stats.has(s) ? "border-primary/40 bg-ember-soft" : "border-border bg-muted/40 hover:bg-muted"}`}
-              >
-                <span className="flex items-center gap-2 text-xs font-medium">
-                  <span className={`h-2 w-2 rounded-full ${dot}`} /> {s}
-                </span>
-                <span className="font-num text-sm font-bold">{list.length}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
         {/* LEFT FILTER SIDEBAR */}
