@@ -214,100 +214,33 @@ export default function Home() {
         
 
       {/* IMPLEMENTATION ROADMAP */}
-      <section className="rounded-3xl border border-border bg-white p-8 shadow-elev-md">
+      <section className="rounded-3xl border border-border bg-card p-8 shadow-elev-md">
+        <SectionHeader
+          eyebrow="Strategic Planning"
+          title="Implementation Roadmap"
+          action={
+            <Link to="/roadmap" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-sub font-semibold hover:opacity-90">
+              <CalendarRange className="w-4 h-4" /> View Full Roadmap
+            </Link>
+          }
+        />
 
-        <div className="text-center">
-          <h2 className="text-4xl font-bold">
-            Implementation Roadmap
-          </h2>
+        <p className="text-muted-foreground mt-2 mb-6">44 initiatives mapped across fiscal years with strategic alignment</p>
 
-          <p className="text-muted-foreground mt-3">
-            Strategic rollout from FY25 initial deployment through FY30 scaling
-          </p>
+        {/* Fiscal Year Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
+          <RoadmapFYCard fy="FY25" status="Deployed" color="bg-success/10 border-success/30" />
+          <RoadmapFYCard fy="FY26" status="In Progress" color="bg-warning/10 border-warning/30" />
+          <RoadmapFYCard fy="FY27" status="In Progress" color="bg-warning/10 border-warning/30" />
+          <RoadmapFYCard fy="FY28" status="Pipeline" color="bg-muted border-border" />
+          <RoadmapFYCard fy="FY29" status="Pipeline" color="bg-muted border-border" />
+          <RoadmapFYCard fy="FY30" status="Pipeline" color="bg-muted border-border" />
         </div>
 
-  {/* Fiscal Years */}
-  <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-10">
-
-    <div className="rounded-xl bg-green-600 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY25</h3>
-      <p className="text-sm mt-1">Deployed</p>
-    </div>
-
-    <div className="rounded-xl bg-yellow-500 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY26</h3>
-      <p className="text-sm mt-1">In Progress</p>
-    </div>
-
-    <div className="rounded-xl bg-yellow-500 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY27</h3>
-      <p className="text-sm mt-1">In Progress</p>
-    </div>
-
-    <div className="rounded-xl bg-slate-500 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY28</h3>
-      <p className="text-sm mt-1">Pipeline</p>
-    </div>
-
-    <div className="rounded-xl bg-slate-500 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY29</h3>
-      <p className="text-sm mt-1">Pipeline</p>
-    </div>
-
-    <div className="rounded-xl bg-slate-500 text-white p-5 text-center">
-      <h3 className="font-bold text-2xl">FY30</h3>
-      <p className="text-sm mt-1">Pipeline</p>
-    </div>
-
-  </div>
-
-  {/* Timeline */}
-  <div className="h-2 bg-gray-200 rounded-full mt-8 relative">
-    <div className="absolute left-0 top-0 h-2 w-1/3 bg-yellow-500 rounded-full"></div>
-  </div>
-
-  {/* Project Cards */}
-  <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mt-10">
-
-    <RoadmapCard
-      title="Order Entry"
-      tag="Automation"
-      tagColor="bg-pink-100 text-pink-600"
-    />
-
-    <RoadmapCard
-      title="Quotations & Returns"
-      tag="Automation"
-      tagColor="bg-pink-100 text-pink-600"
-    />
-
-    <RoadmapCard
-      title="Price Verification"
-      tag="Advanced Analytics"
-      tagColor="bg-orange-100 text-orange-600"
-    />
-
-    <RoadmapCard
-      title="Quality Assist Agent"
-      tag="GenAI"
-      tagColor="bg-cyan-100 text-cyan-600"
-    />
-
-    <RoadmapCard
-      title="Master Data Governance"
-      tag="GenAI"
-      tagColor="bg-cyan-100 text-cyan-600"
-    />
-
-    <RoadmapCard
-      title="Customer Sentiment"
-      tag="GenAI"
-      tagColor="bg-cyan-100 text-cyan-600"
-    />
-
-  </div>
-
-</section>
+        <div className="mt-6 text-center text-sm text-muted-foreground">
+          <p>Explore the comprehensive timeline with all 44 projects, detailed Gantt visualization, and business metrics</p>
+        </div>
+      </section>
 {/* ABOUT TE AI HUB */}
 <section className="rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md">
   <SectionHeader
@@ -399,24 +332,11 @@ function AboutCard({ icon, title, body }: { icon: React.ReactNode; title: string
     </div>
   );
 }
-function RoadmapCard({
-  title,
-  tag,
-  tagColor,
-}: {
-  title: string;
-  tag: string;
-  tagColor: string;
-}) {
+function RoadmapFYCard({ fy, status, color }: { fy: string; status: string; color: string }) {
   return (
-    <div className="border border-border rounded-xl p-4 bg-white hover:shadow-lg transition">
-      <h4 className="font-semibold text-sm mb-3">
-        {title}
-      </h4>
-
-      <span className={`text-xs px-3 py-1 rounded-full ${tagColor}`}>
-        {tag}
-      </span>
+    <div className={`rounded-xl border p-4 text-center ${color} shadow-elev-sm`}>
+      <h3 className="font-display font-bold text-lg">{fy}</h3>
+      <p className="text-xs text-muted-foreground mt-1">{status}</p>
     </div>
   );
 }

@@ -1,11 +1,12 @@
 import { NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Home, Library, Compass, GanttChartSquare, Sparkles, Activity } from "lucide-react";
+import { Home, Library, Compass, GanttChartSquare, Sparkles, Activity, Calendar } from "lucide-react";
 
 const nav = [
   { to: "/", label: "Command Center", icon: Home },
   { to: "/library", label: "Project Library", icon: Library },
   { to: "/strategic", label: "Strategic View", icon: Compass },
+  { to: "/roadmap", label: "Implementation Roadmap", icon: Calendar },
   { to: "/gantt", label: "Portfolio Gantt", icon: GanttChartSquare },
   { to: "/galaxy", label: "Transformation Galaxy", icon: Sparkles },
 ];
