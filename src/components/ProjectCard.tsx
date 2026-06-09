@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Clock, TrendingUp, MapPin, User2 } from "lucide-react";
+import { ArrowUpRight, TrendingUp, MapPin, User2 } from "lucide-react";
 import type { Project } from "@/data/projects";
 
 const statusColor: Record<string, string> = {
@@ -71,9 +71,8 @@ export function ProjectCard({ p, index = 0 }: { p: Project; index?: number }) {
 
           <h3 className="font-display font-bold text-base leading-snug line-clamp-2 group-hover:text-primary transition-colors">{p.name}</h3>
 
-          <div className="mt-3 grid grid-cols-2 gap-3">
-            <Metric icon={<TrendingUp className="w-3.5 h-3.5" />} label="Value / yr" value={`$${formatShort(p.annualSavings)}`} />
-            <Metric icon={<Clock className="w-3.5 h-3.5" />} label="Hours / wk" value={p.weeklyHours ? p.weeklyHours.toLocaleString() : "—"} />
+          <div className="mt-3">
+            <Metric icon={<TrendingUp className="w-3.5 h-3.5" />} label="Annual Value" value={`$${formatShort(p.annualSavings)}`} />
           </div>
 
           <div className="mt-4 flex items-center justify-between text-xs text-muted-foreground">

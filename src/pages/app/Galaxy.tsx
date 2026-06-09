@@ -33,42 +33,41 @@ export default function Galaxy() {
 
   return (
     <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
-      <header className="mb-8 flex items-start justify-between gap-6 flex-wrap">
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold flex items-center gap-2">
-            <Grid3x3 className="w-3.5 h-3.5" /> Gartner Quadrant
-          </div>
-          <h1 className="font-display font-bold text-3xl mt-1">Magic Quadrant — Portfolio Positioning</h1>
-          <p className="text-muted-foreground mt-2 max-w-2xl text-sm">
-            Each initiative plotted against its Ability to Execute and Completeness of Vision. Leaders sit top-right.
-          </p>
+      <header className="mb-6">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold flex items-center gap-2">
+          <Grid3x3 className="w-3.5 h-3.5" /> Gartner Quadrant
         </div>
-        <div className="flex flex-wrap gap-3 text-xs">
+        <h1 className="font-display font-bold text-2xl mt-1">Magic Quadrant — Portfolio Positioning</h1>
+        <p className="text-muted-foreground mt-1 text-xs max-w-2xl">
+          Each initiative plotted by Ability to Execute (X-axis) and Completeness of Vision (Y-axis). Leaders sit top-right.
+        </p>
+      </header>
+
+      <div className="rounded-3xl border border-border bg-card p-5 shadow-elev-md">
+        <div className="flex items-center gap-3 mb-4 flex-wrap text-[11px]">
           {Object.entries(catColor).map(([k, c]) => (
-            <span key={k} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border bg-card">
-              <span className="w-2 h-2 rounded-full" style={{ background: `hsl(${c})` }} /> {k}
+            <span key={k} className="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border/50 bg-muted/30">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: `hsl(${c})` }} /> <span className="font-medium">{k}</span>
             </span>
           ))}
         </div>
-      </header>
-
-      <div className="rounded-3xl border border-border bg-card p-6 shadow-elev-md">
-        <div className="relative aspect-[16/11] w-full">
+        
+        <div className="relative aspect-[14/10] w-full">
           {/* axes */}
           <div className="absolute inset-0 grid grid-cols-2 grid-rows-2">
-            <Quadrant title="Challengers" subtitle="Strong execution · Less vision" align="tl" />
-            <Quadrant title="Leaders" subtitle="Execute well · Bold vision" align="tr" highlight />
-            <Quadrant title="Niche Players" subtitle="Limited execution & vision" align="bl" />
-            <Quadrant title="Visionaries" subtitle="Bold vision · Building execution" align="br" />
+            <Quadrant title="Challengers" subtitle="Strong execution" align="tl" />
+            <Quadrant title="Leaders" subtitle="Execute well + Bold vision" align="tr" highlight />
+            <Quadrant title="Niche Players" subtitle="Limited execution" align="bl" />
+            <Quadrant title="Visionaries" subtitle="Bold vision" align="br" />
           </div>
 
-          {/* axis arrows */}
+          {/* axis lines */}
           <div className="absolute left-2 top-2 bottom-2 w-px bg-border" />
           <div className="absolute left-2 right-2 bottom-2 h-px bg-border" />
-          <div className="absolute left-1/2 top-2 bottom-2 w-px bg-border/60 border-l border-dashed border-border" />
-          <div className="absolute left-2 right-2 top-1/2 h-px bg-border/60 border-t border-dashed border-border" />
-          <div className="absolute -left-1 top-0 text-[10px] uppercase tracking-widest text-muted-foreground font-mono rotate-180" style={{ writingMode: "vertical-rl" }}>↑ Completeness of Vision</div>
-          <div className="absolute right-2 -bottom-6 text-[10px] uppercase tracking-widest text-muted-foreground font-mono">Ability to Execute →</div>
+          <div className="absolute left-1/2 top-2 bottom-2 w-px bg-border/40 border-l border-dashed border-border" />
+          <div className="absolute left-2 right-2 top-1/2 h-px bg-border/40 border-t border-dashed border-border" />
+          <div className="absolute -left-1 top-1/2 -translate-y-1/2 text-[9px] uppercase tracking-widest text-muted-foreground/60 font-mono -rotate-90 origin-right" style={{ right: "100%", whiteSpace: "nowrap" }}>Vision</div>
+          <div className="absolute bottom-1 left-1/2 text-[9px] uppercase tracking-widest text-muted-foreground/60 font-mono">Execution</div>
 
           {/* points */}
           {points.map(({ p, x, y }, i) => (
@@ -84,12 +83,12 @@ export default function Galaxy() {
             >
               <Link to={`/projects/${p.id}`}>
                 <span
-                  className="block rounded-full ring-2 ring-card transition group-hover:scale-150"
+                  className="block rounded-full ring-2 ring-card/80 transition group-hover:scale-140"
                   style={{
-                    width: 10 + Math.min(20, Math.log10(p.annualSavings + 10) * 3),
-                    height: 10 + Math.min(20, Math.log10(p.annualSavings + 10) * 3),
+                    width: 8 + Math.min(16, Math.log10(p.annualSavings + 10) * 2.5),
+                    height: 8 + Math.min(16, Math.log10(p.annualSavings + 10) * 2.5),
                     background: `hsl(${catColor[p.category] ?? "var(--primary)"})`,
-                    boxShadow: `0 0 12px hsl(${catColor[p.category] ?? "var(--primary)"} / 0.5)`,
+                    boxShadow: `0 0 8px hsl(${catColor[p.category] ?? "var(--primary)"} / 0.4)`,
                   }}
                 />
               </Link>
@@ -121,16 +120,16 @@ export default function Galaxy() {
 }
 
 function Quadrant({ title, subtitle, align, highlight }: { title: string; subtitle: string; align: "tl" | "tr" | "bl" | "br"; highlight?: boolean }) {
-  const pad = "p-4";
+  const pad = "p-3";
   const pos = align === "tl" ? "items-start justify-start text-left" :
               align === "tr" ? "items-start justify-end text-right" :
               align === "bl" ? "items-end justify-start text-left" :
                                "items-end justify-end text-right";
   return (
-    <div className={`relative border border-border/60 ${pad} flex ${pos} ${highlight ? "bg-ember-soft" : "bg-muted/20"}`}>
+    <div className={`relative border border-border/50 ${pad} flex ${pos} ${highlight ? "bg-ember-soft/60" : "bg-muted/15"}`}>
       <div>
-        <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">{title}</div>
-        <div className="text-[11px] text-muted-foreground">{subtitle}</div>
+        <div className="text-[9px] uppercase tracking-[0.15em] text-primary font-semibold">{title}</div>
+        <div className="text-[10px] text-muted-foreground leading-tight">{subtitle}</div>
       </div>
     </div>
   );
