@@ -35,24 +35,64 @@ export default function Home() {
 
   return (
     <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto space-y-16">
+      {/* TOP CONTROL BAR — classified OS strip */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+        className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/60 backdrop-blur px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground"
+      >
+        <span className="flex items-center gap-2 text-primary">
+          <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
+          SYS://TE-AI-HUB · ONLINE
+        </span>
+        <span className="opacity-40">│</span>
+        <span>FY26 · {portfolioStats.activeProjects} INIT</span>
+        <span className="opacity-40">│</span>
+        <span className="hidden md:inline">UPLINK · EMIA ↔ AMER</span>
+        <div className="ml-auto flex items-center gap-1.5">
+          {(["ALL", "EMIA", "AMER", "Global"] as const).map((r) => (
+            <button
+              key={r}
+              onClick={() => setRegion(r as ProjectRegion | "ALL")}
+              className={`px-2.5 py-1 rounded-md border transition ${region === r ? "border-primary/60 text-primary bg-primary/10" : "border-border hover:border-primary/40 hover:text-foreground"}`}
+            >
+              {r}
+            </button>
+          ))}
+          <Link to="/library" className="px-2.5 py-1 rounded-md border border-border hover:border-primary/40 hover:text-primary transition inline-flex items-center gap-1">
+            LIBRARY <ArrowRight className="w-3 h-3" />
+          </Link>
+          <Link to="/galaxy" className="px-2.5 py-1 rounded-md border border-border hover:border-primary/40 hover:text-primary transition">
+            GALAXY
+          </Link>
+        </div>
+      </motion.div>
+
       {/* HERO */}
-      <section className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-elev-lg">
-        <div className="absolute inset-0 grid-pattern opacity-40" />
+      <section className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-elev-lg noise scanlines">
+        <div className="absolute inset-0 cyber-grid opacity-30" />
+        <CyberParticles density={100} />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
         <NeuralHero />
         <div className="relative z-10 px-8 pt-10 pb-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-primary font-semibold"
+            className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-primary font-semibold"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
-            Live · FY26 Portfolio · Executive View
+            ▌ LIVE · FY26 PORTFOLIO · EXECUTIVE VIEW
           </motion.div>
 
-          <ParticleTitle text="TE AI Transformation Hub" subText="The operating system for global AI, Automation & Digital Transformation" />
+          <h1 className="glitch font-display font-black text-4xl lg:text-6xl mt-4 leading-[0.95] tracking-tight" data-text="TE AI Transformation Hub">
+            TE AI Transformation Hub
+          </h1>
+          <p className="mt-3 font-mono text-sm text-muted-foreground max-w-2xl">
+            &gt; the operating system for global AI, automation &amp; digital transformation_
+            <span className="inline-block w-2 h-4 align-middle bg-primary ml-1 flicker" />
+          </p>
 
           <motion.div
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2 }}
+            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
             className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6"
           >
             <Kpi icon={<Sparkles className="w-4 h-4" />} label="Active Projects" value={<AnimatedCounter value={portfolioStats.activeProjects} />} />
@@ -62,14 +102,14 @@ export default function Home() {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.5 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
             className="mt-6 flex flex-wrap gap-3"
           >
-            <Link to="/library" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-ember text-white text-sm font-semibold shadow-ember magnetic">
-              Explore Portfolio <ArrowRight className="w-4 h-4" />
+            <Link to="/library" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ember text-white text-sm font-mono uppercase tracking-wider font-semibold shadow-ember magnetic">
+              ► Explore Portfolio
             </Link>
-            <Link to="/galaxy" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border border-border bg-card text-sm font-semibold magnetic">
-              <Sparkles className="w-4 h-4 text-primary" /> Open Transformation Galaxy
+            <Link to="/galaxy" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/40 bg-card text-sm font-mono uppercase tracking-wider font-semibold magnetic hover:bg-primary/10">
+              <Sparkles className="w-4 h-4 text-primary" /> Transformation Galaxy
             </Link>
           </motion.div>
         </div>
