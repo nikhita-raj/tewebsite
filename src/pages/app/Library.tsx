@@ -2,14 +2,11 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { projects, categories, regions, type ProjectCategory, type ProjectRegion, type ProjectStatus, type ProjectPriority } from "@/data/projects";
+import { projects, categories, parseProjectDate, type ProjectCategory, type ProjectStatus, type ProjectPriority } from "@/data/projects";
 import { ProjectCard, CATEGORY_COLOR } from "@/components/ProjectCard";
 
 const statuses: ProjectStatus[] = ["Live", "In Progress", "In Discovery", "Planned"];
 const priorities: ProjectPriority[] = ["Critical", "High", "Medium", "Standard"];
-
-const HOURS_MAX = Math.ceil(Math.max(...projects.map((p) => p.weeklyHours)) / 50) * 50;
 
 type AnyFilter = string;
 
@@ -17,12 +14,29 @@ export default function Library() {
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState("");
   const initialCat = params.get("category") as ProjectCategory | null;
+  const initialYear = params.get("year");
 
   const [cats, setCats] = useState<Set<ProjectCategory>>(new Set(initialCat ? [initialCat] : []));
-  const [regs, setRegs] = useState<Set<ProjectRegion>>(new Set());
   const [stats, setStats] = useState<Set<ProjectStatus>>(new Set());
   const [prios, setPrios] = useState<Set<ProjectPriority>>(new Set());
-  const [hours, setHours] = useState<[number, number]>([0, HOURS_MAX]);
+  const [funcs, setFuncs] = useState<Set<string>>(new Set());
+  const [year, setYear] = useState<string | null>(initialYear);
+
+  // Build function list (from project area)
+  const functions = useMemo(() => {
+    const s = new Set<string>();
+    projects.forEach((p) => p.area && s.add(p.area));
+    return Array.from(s).sort();
+  }, []);
+
+  const years = useMemo(() => {
+    const s = new Set<number>();
+    projects.forEach((p) => {
+      const d = parseProjectDate(p.startDate) ?? parseProjectDate(p.endDate);
+      if (d) s.add(d.getFullYear());
+    });
+    return Array.from(s).sort();
+  }, []);
 
   const toggle = <T extends AnyFilter>(set: Set<T>, val: T, setFn: (s: Set<T>) => void) => {
     const n = new Set(set);
@@ -33,30 +47,32 @@ export default function Library() {
   const filtered = useMemo(() => {
     return projects.filter((p) => {
       if (cats.size && !cats.has(p.category)) return false;
-      if (regs.size && !regs.has(p.region)) return false;
       if (stats.size && !stats.has(p.status)) return false;
       if (prios.size && !prios.has(p.priority)) return false;
-      if (p.weeklyHours < hours[0] || p.weeklyHours > hours[1]) return false;
-      if (q && !(`${p.name} ${p.pm} ${p.team} ${p.bu}`).toLowerCase().includes(q.toLowerCase())) return false;
+      if (funcs.size && !funcs.has(p.area)) return false;
+      if (year) {
+        const d = parseProjectDate(p.startDate) ?? parseProjectDate(p.endDate);
+        if (!d || d.getFullYear() !== Number(year)) return false;
+      }
+      if (q && !(`${p.name} ${p.pm} ${p.team} ${p.bu} ${p.area}`).toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
-  }, [cats, regs, stats, prios, q, hours]);
+  }, [cats, stats, prios, funcs, year, q]);
 
-  const hoursActive = hours[0] !== 0 || hours[1] !== HOURS_MAX;
-  const activeCount = cats.size + regs.size + stats.size + prios.size + (hoursActive ? 1 : 0);
+  const activeCount = cats.size + stats.size + prios.size + funcs.size + (year ? 1 : 0);
 
   const clearAll = () => {
-    setCats(new Set()); setRegs(new Set()); setStats(new Set()); setPrios(new Set());
-    setHours([0, HOURS_MAX]); setQ(""); setParams({});
+    setCats(new Set()); setStats(new Set()); setPrios(new Set()); setFuncs(new Set());
+    setYear(null); setQ(""); setParams({});
   };
 
   const counts = useMemo(() => {
-    const acc = { cat: {} as Record<string, number>, reg: {} as Record<string, number>, st: {} as Record<string, number>, pr: {} as Record<string, number> };
+    const acc = { cat: {} as Record<string, number>, st: {} as Record<string, number>, pr: {} as Record<string, number>, fn: {} as Record<string, number> };
     projects.forEach((p) => {
       acc.cat[p.category] = (acc.cat[p.category] ?? 0) + 1;
-      acc.reg[p.region] = (acc.reg[p.region] ?? 0) + 1;
       acc.st[p.status] = (acc.st[p.status] ?? 0) + 1;
       acc.pr[p.priority] = (acc.pr[p.priority] ?? 0) + 1;
+      acc.fn[p.area] = (acc.fn[p.area] ?? 0) + 1;
     });
     return acc;
   }, []);
@@ -75,9 +91,39 @@ export default function Library() {
         </div>
       </div>
 
+      {/* TOP STATUS-OF-EACH-PROJECT STRIP */}
+      <div className="mb-5 rounded-2xl border border-border bg-card p-4 shadow-elev-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Status snapshot</div>
+          {year && (
+            <button onClick={() => setYear(null)} className="text-[10px] uppercase tracking-widest text-primary inline-flex items-center gap-1">
+              <X className="w-3 h-3" /> Year: {year}
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {statuses.map((s) => {
+            const list = filtered.filter((p) => p.status === s);
+            const dot = s === "Live" ? "bg-emerald-500" : s === "In Progress" ? "bg-amber-500" : s === "In Discovery" ? "bg-sky-500" : "bg-slate-400";
+            return (
+              <button
+                key={s}
+                onClick={() => toggle(stats, s, setStats)}
+                className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left transition ${stats.has(s) ? "border-primary/40 bg-ember-soft" : "border-border bg-muted/40 hover:bg-muted"}`}
+              >
+                <span className="flex items-center gap-2 text-xs font-medium">
+                  <span className={`h-2 w-2 rounded-full ${dot}`} /> {s}
+                </span>
+                <span className="font-num text-sm font-bold">{list.length}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
         {/* LEFT FILTER SIDEBAR */}
-        <aside className="lg:sticky lg:top-20 lg:self-start glass rounded-2xl p-5 space-y-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
+        <aside className="lg:sticky lg:top-32 lg:self-start rounded-2xl bg-card border border-border p-5 space-y-6 max-h-[calc(100vh-9rem)] overflow-y-auto shadow-elev-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <SlidersHorizontal className="w-4 h-4 text-primary" />
@@ -86,14 +132,13 @@ export default function Library() {
                 <span className="px-1.5 py-0.5 rounded-full bg-primary text-primary-foreground text-[10px] font-bold">{activeCount}</span>
               )}
             </div>
-            {activeCount > 0 && (
+            {(activeCount > 0 || q) && (
               <button onClick={clearAll} className="text-[10px] uppercase tracking-widest text-muted-foreground hover:text-primary inline-flex items-center gap-1">
                 <X className="w-3 h-3" /> Clear
               </button>
             )}
           </div>
 
-          {/* SEARCH */}
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -108,7 +153,6 @@ export default function Library() {
             )}
           </div>
 
-          {/* CATEGORY CHIPS */}
           <FilterGroup label="Category" count={cats.size}>
             <div className="flex flex-wrap gap-1.5">
               {categories.map((c) => {
@@ -119,9 +163,7 @@ export default function Library() {
                     key={c}
                     onClick={() => toggle(cats, c, setCats)}
                     className={`inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border text-[11px] font-medium transition ${
-                      active
-                        ? "text-foreground shadow-elev-sm"
-                        : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
+                      active ? "text-foreground shadow-elev-sm" : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
                     }`}
                     style={active ? { background: `linear-gradient(135deg, ${color}22, ${color}10)`, borderColor: `${color}66` } : undefined}
                   >
@@ -134,44 +176,14 @@ export default function Library() {
             </div>
           </FilterGroup>
 
-          {/* WEEKLY HOURS RANGE */}
-          <FilterGroup label="Weekly Hours Saved" count={hoursActive ? 1 : 0}>
-            <div className="px-1 pt-2">
-              <Slider
-                value={hours}
-                min={0}
-                max={HOURS_MAX}
-                step={10}
-                onValueChange={(v) => setHours([v[0], v[1]] as [number, number])}
-              />
-              <div className="flex items-center justify-between mt-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-                <span className="font-num text-foreground">{hours[0]}h</span>
-                <span>range</span>
-                <span className="font-num text-foreground">{hours[1]}h</span>
-              </div>
-            </div>
-          </FilterGroup>
-
-          {/* REGION CHIPS */}
-          <FilterGroup label="Region" count={regs.size}>
-            <div className="flex flex-wrap gap-1.5">
-              {regions.map((r) => {
-                const active = regs.has(r);
-                return (
-                  <button
-                    key={r}
-                    onClick={() => toggle(regs, r, setRegs)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium transition ${
-                      active
-                        ? "bg-primary/10 text-primary border-primary/40"
-                        : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
-                    }`}
-                  >
-                    {r}
-                    <span className="font-num text-[10px] opacity-70">{counts.reg[r] ?? 0}</span>
-                  </button>
-                );
-              })}
+          {/* FUNCTION (area) */}
+          <FilterGroup label="Function" count={funcs.size}>
+            <div className="max-h-48 overflow-y-auto space-y-1 pr-1">
+              {functions.map((f) => (
+                <CheckRow key={f} checked={funcs.has(f)} onClick={() => toggle(funcs, f, setFuncs)} count={counts.fn[f]}>
+                  {f}
+                </CheckRow>
+              ))}
             </div>
           </FilterGroup>
 
@@ -187,9 +199,24 @@ export default function Library() {
               <CheckRow key={p} checked={prios.has(p)} onClick={() => toggle(prios, p, setPrios)} count={counts.pr[p]}>{p}</CheckRow>
             ))}
           </FilterGroup>
+
+          {years.length > 0 && (
+            <FilterGroup label="Year" count={year ? 1 : 0}>
+              <div className="flex flex-wrap gap-1.5">
+                {years.map((y) => (
+                  <button
+                    key={y}
+                    onClick={() => setYear(year === String(y) ? null : String(y))}
+                    className={`px-2.5 py-1 rounded-full border text-[11px] font-medium font-num transition ${year === String(y) ? "bg-primary/10 text-primary border-primary/40" : "text-muted-foreground border-border bg-card/60 hover:border-primary/30"}`}
+                  >
+                    {y}
+                  </button>
+                ))}
+              </div>
+            </FilterGroup>
+          )}
         </aside>
 
-        {/* GRID */}
         <div>
           <motion.div layout className="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
             <AnimatePresence mode="popLayout">
@@ -230,7 +257,7 @@ function CheckRow({ checked, onClick, count, dot, children }: { checked: boolean
           {checked && <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5L3.5 7L8 1.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>}
         </span>
         {dot && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: dot }} />}
-        <span className="truncate font-medium">{children}</span>
+        <span className="truncate font-medium text-left">{children}</span>
       </span>
       {count !== undefined && <span className="font-num text-[10px] text-muted-foreground tabular-nums">{count}</span>}
     </button>

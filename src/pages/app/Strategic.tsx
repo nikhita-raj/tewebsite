@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { projects } from "@/data/projects";
 import { formatShort } from "@/components/ProjectCard";
 import { StrategyCurveChart } from "@/components/StrategyCurveChart";
+import { StrategicRoadmapChart } from "@/components/StrategicRoadmapChart";
 
 const stages = [
   { key: "Current State", year: "FY25", desc: "Manual, fragmented workflows across regions." },
@@ -23,11 +24,16 @@ const stageAssign = (i: number) => {
 export default function Strategic() {
   return (
     <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
-      <header className="mb-10">
+      <header className="mb-10 text-center">
         <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Strategic Roadmap</div>
         <h1 className="font-display font-bold text-3xl mt-1">Transformation Journey</h1>
-        <p className="text-muted-foreground mt-2 max-w-2xl">A boardroom-grade view of how we move from today's operating model to an autonomous enterprise.</p>
+        <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">AI &amp; Analytics transformation journey from FY26 through FY27 and beyond.</p>
       </header>
+
+      {/* Reference-style roadmap chart */}
+      <section className="mb-14">
+        <StrategicRoadmapChart />
+      </section>
 
       <section className="mb-14">
         <StrategyCurveChart />

@@ -1,14 +1,13 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { ArrowRight, TrendingUp, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles, Target, Shield, Zap, Globe as GlobeIcon } from "lucide-react";
-// ParticleTitle replaced by glitch hero
+import { ArrowRight, Clock, Users, DollarSign, Cpu, Bot, BarChart3, Network, Sparkles, Target, Shield, Zap, Globe as GlobeIcon, Grid3x3, CalendarRange } from "lucide-react";
 import { NeuralHero } from "@/components/hero/NeuralHero";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { Globe } from "@/components/Globe";
 import { ProjectCard, formatShort } from "@/components/ProjectCard";
 import { CyberParticles } from "@/components/CyberParticles";
-import { projects, portfolioStats, categories, type ProjectRegion } from "@/data/projects";
+import { projects, portfolioStats, categories, parseProjectDate, type ProjectRegion } from "@/data/projects";
 
 const catIcons: Record<string, React.ComponentType<{ className?: string }>> = {
   AI: Cpu, Automation: Bot, Analytics: BarChart3, "Digital Transformation": Network,
@@ -16,9 +15,10 @@ const catIcons: Record<string, React.ComponentType<{ className?: string }>> = {
 
 export default function Home() {
   const [region, setRegion] = useState<ProjectRegion | "ALL">("ALL");
+  const navigate = useNavigate();
 
   const regionCounts = useMemo(() => {
-    const r: Record<ProjectRegion, number> = { EMIA: 0, AMER: 0, Global: 0 };
+    const r: Record<ProjectRegion, number> = { EMIA: 0, AMER: 0, APAC: 0, Global: 0 };
     for (const p of projects) r[p.region]++;
     return r;
   }, []);
@@ -33,258 +33,266 @@ export default function Home() {
     [filtered]
   );
 
+  // Year-wise insights (by start date year, fallback to end date year)
+  const yearInsights = useMemo(() => {
+    const map = new Map<number, { count: number; value: number; hours: number; live: number; inProgress: number }>();
+    for (const p of projects) {
+      const d = parseProjectDate(p.startDate) ?? parseProjectDate(p.endDate);
+      if (!d) continue;
+      const y = d.getFullYear();
+      const cur = map.get(y) ?? { count: 0, value: 0, hours: 0, live: 0, inProgress: 0 };
+      cur.count++; cur.value += p.annualSavings; cur.hours += p.weeklyHours;
+      if (p.status === "Live") cur.live++;
+      if (p.status === "In Progress") cur.inProgress++;
+      map.set(y, cur);
+    }
+    return Array.from(map.entries()).sort((a, b) => a[0] - b[0]).map(([year, v]) => ({ year, ...v }));
+  }, []);
+
+  // Gantt-style monthly distribution for current year
+  const ganttBars = useMemo(() => {
+    const months = Array.from({ length: 12 }, (_, i) => i);
+    return months.map((m) => {
+      const active = projects.filter((p) => {
+        const s = parseProjectDate(p.startDate); const e = parseProjectDate(p.endDate);
+        if (!s || !e) return false;
+        const date = new Date(2026, m, 15);
+        return date >= s && date <= e;
+      }).length;
+      return { m, active };
+    });
+  }, []);
+  const maxBar = Math.max(1, ...ganttBars.map(b => b.active));
+
   return (
-    <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto space-y-16">
-      {/* TOP CONTROL BAR — classified OS strip */}
-      <motion.div
-        initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/60 backdrop-blur px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground"
-      >
-        <span className="flex items-center gap-2 text-primary">
-          <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
-          SYS://TE-AI-HUB · ONLINE
-        </span>
-        <span className="opacity-40">│</span>
-        <span>FY26 · {portfolioStats.activeProjects} INIT</span>
-        <span className="opacity-40">│</span>
-        <span className="hidden md:inline">UPLINK · EMIA ↔ AMER</span>
-        <div className="ml-auto flex items-center gap-1.5">
-          {(["ALL", "EMIA", "AMER", "Global"] as const).map((r) => (
-            <button
-              key={r}
-              onClick={() => setRegion(r as ProjectRegion | "ALL")}
-              className={`px-2.5 py-1 rounded-md border transition ${region === r ? "border-primary/60 text-primary bg-primary/10" : "border-border hover:border-primary/40 hover:text-foreground"}`}
-            >
-              {r}
-            </button>
-          ))}
-          <Link to="/library" className="px-2.5 py-1 rounded-md border border-border hover:border-primary/40 hover:text-primary transition inline-flex items-center gap-1">
-            LIBRARY <ArrowRight className="w-3 h-3" />
-          </Link>
-          <Link to="/galaxy" className="px-2.5 py-1 rounded-md border border-border hover:border-primary/40 hover:text-primary transition">
-            GALAXY
-          </Link>
-        </div>
-      </motion.div>
-
-      {/* HERO */}
-      <section className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-elev-lg noise scanlines">
-        <div className="absolute inset-0 cyber-grid opacity-30" />
-        <CyberParticles density={100} />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
-        <NeuralHero />
-        <div className="relative z-10 px-8 pt-10 pb-8">
+    <div className="space-y-16">
+      {/* DARK HERO ZONE — only this part keeps the cyberpunk vibe */}
+      <div className="dark-zone bg-background">
+        <div className="px-6 lg:px-10 pt-8 pb-10 max-w-[1400px] mx-auto space-y-6">
           <motion.div
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-primary font-semibold"
+            initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-card/60 backdrop-blur px-4 py-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
-            ▌ LIVE · FY26 PORTFOLIO · EXECUTIVE VIEW
-          </motion.div>
-
-          <h1 className="glitch font-display font-black text-4xl lg:text-6xl mt-4 leading-[0.95] tracking-tight" data-text="TE AI Transformation Hub">
-            TE AI Transformation Hub
-          </h1>
-          <p className="mt-3 font-mono text-sm text-muted-foreground max-w-2xl">
-            &gt; the operating system for global AI, automation &amp; digital transformation_
-            <span className="inline-block w-2 h-4 align-middle bg-primary ml-1 flicker" />
-          </p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6"
-          >
-            <Kpi icon={<Sparkles className="w-4 h-4" />} label="Active Projects" value={<AnimatedCounter value={portfolioStats.activeProjects} />} />
-            <Kpi icon={<Clock className="w-4 h-4" />} label="Weekly Hours Saved" value={<AnimatedCounter value={portfolioStats.weeklyHoursSaved} />} />
-            <Kpi icon={<Users className="w-4 h-4" />} label="FTE Savings" value={<AnimatedCounter value={portfolioStats.fteSavings} decimals={1} />} accent />
-            <Kpi icon={<DollarSign className="w-4 h-4" />} label="Estimated Value / yr" value={<AnimatedCounter value={portfolioStats.estimatedAnnualValue / 1_000_000} decimals={2} prefix="$" suffix="M" />} accent />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
-            className="mt-6 flex flex-wrap gap-3"
-          >
-            <Link to="/library" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ember text-white text-sm font-mono uppercase tracking-wider font-semibold shadow-ember magnetic">
-              ► Explore Portfolio
-            </Link>
-            <Link to="/galaxy" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/40 bg-card text-sm font-mono uppercase tracking-wider font-semibold magnetic hover:bg-primary/10">
-              <Sparkles className="w-4 h-4 text-primary" /> Transformation Galaxy
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* HEALTH SCORE + GLOBE */}
-      <section className="grid lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-2 rounded-3xl bg-card border border-border p-6 shadow-elev-md">
-          <SectionHeader eyebrow="Executive Pulse" title="AI Transformation Score" />
-          <div className="mt-6 flex items-center gap-6">
-            <ScoreRing value={94} />
-            <div className="space-y-2 text-sm">
-              <PulseRow label="Portfolio Growth" value="+18% QoQ" tone="up" />
-              <PulseRow label="Value Generated" value={`$${formatShort(portfolioStats.estimatedAnnualValue)} / yr`} tone="up" />
-              <PulseRow label="Active Programs" value={`${portfolioStats.activeProjects} live`} tone="neutral" />
-              <PulseRow label="Upcoming Milestones" value="12 next 30d" tone="neutral" />
+            <span className="flex items-center gap-2 text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
+              SYS://TE-AI-HUB · ONLINE
+            </span>
+            <span className="opacity-40">│</span>
+            <span>FY26 · {portfolioStats.activeProjects} INIT</span>
+            <div className="ml-auto flex items-center gap-1.5">
+              {(["ALL", "EMIA", "AMER", "APAC", "Global"] as const).map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRegion(r as ProjectRegion | "ALL")}
+                  className={`px-2.5 py-1 rounded-md border transition ${region === r ? "border-primary/60 text-primary bg-primary/10" : "border-border hover:border-primary/40 hover:text-foreground"}`}
+                >
+                  {r}
+                </button>
+              ))}
             </div>
-          </div>
-        </div>
+          </motion.div>
 
-        <div className="lg:col-span-3 rounded-3xl bg-card border border-border p-6 shadow-elev-md">
+          <section className="relative overflow-hidden rounded-2xl border border-border bg-card shadow-elev-lg noise scanlines">
+            <div className="absolute inset-0 cyber-grid opacity-30" />
+            <CyberParticles density={100} />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
+            <NeuralHero />
+            <div className="relative z-10 px-8 pt-10 pb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-primary font-semibold"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
+                ▌ LIVE · FY26 PORTFOLIO · EXECUTIVE VIEW
+              </motion.div>
+
+              <h1 className="glitch font-display font-black text-4xl lg:text-6xl mt-4 leading-[0.95]" data-text="TE AI Transformation Hub">
+                TE AI Transformation Hub
+              </h1>
+              <p className="mt-3 font-mono text-sm text-muted-foreground max-w-2xl">
+                &gt; the operating system for global AI, automation &amp; digital transformation_
+                <span className="inline-block w-2 h-4 align-middle bg-primary ml-1 flicker" />
+              </p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6"
+              >
+                <Kpi icon={<Sparkles className="w-4 h-4" />} label="Active Projects" value={<AnimatedCounter value={portfolioStats.activeProjects} />} />
+                <Kpi icon={<Clock className="w-4 h-4" />} label="Weekly Hours Saved" value={<AnimatedCounter value={portfolioStats.weeklyHoursSaved} />} />
+                <Kpi icon={<Users className="w-4 h-4" />} label="FTE Savings" value={<AnimatedCounter value={portfolioStats.fteSavings} decimals={1} />} accent />
+                <Kpi icon={<DollarSign className="w-4 h-4" />} label="Estimated Value / yr" value={<AnimatedCounter value={portfolioStats.estimatedAnnualValue / 1_000_000} decimals={2} prefix="$" suffix="M" />} accent />
+              </motion.div>
+
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} className="mt-6 flex flex-wrap gap-3">
+                <Link to="/library" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ember text-white text-sm font-mono uppercase tracking-wider font-semibold shadow-ember">
+                  ► Explore Portfolio
+                </Link>
+                <Link to="/galaxy" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/40 bg-card text-sm font-mono uppercase tracking-wider font-semibold hover:bg-primary/10">
+                  <Grid3x3 className="w-4 h-4 text-primary" /> Gartner Quadrant
+                </Link>
+              </motion.div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      {/* LIGHT CONTENT ZONE */}
+      <div className="px-6 lg:px-10 max-w-[1400px] mx-auto space-y-16 pb-16">
+
+        {/* GLOBAL COVERAGE — region cards, no score */}
+        <section className="rounded-3xl bg-card border border-border p-6 shadow-elev-md">
           <SectionHeader eyebrow="Geography" title="Global Coverage" action={
             <span className="text-xs text-muted-foreground">Click a region to filter the portfolio</span>
           } />
           <div className="mt-4 grid md:grid-cols-2 gap-6 items-center">
             <Globe counts={regionCounts} active={region} onSelect={setRegion} />
-            <div className="space-y-3">
-              {(["EMIA", "AMER", "Global"] as ProjectRegion[]).map((r) => {
+            <div className="grid grid-cols-2 gap-3">
+              {(["EMIA", "AMER", "APAC", "Global"] as ProjectRegion[]).map((r) => {
                 const c = projects.filter((p) => p.region === r);
                 const value = c.reduce((a, b) => a + b.annualSavings, 0);
                 return (
                   <button
                     key={r} onClick={() => setRegion(region === r ? "ALL" : r)}
-                    className={`w-full text-left rounded-2xl border p-4 transition ${region === r ? "border-primary/40 bg-ember-soft shadow-elev-sm" : "border-border bg-muted/40 hover:bg-muted"}`}
+                    className={`text-left rounded-2xl border p-4 transition ${region === r ? "border-primary/40 bg-ember-soft shadow-elev-sm" : "border-border bg-muted/40 hover:bg-muted"}`}
                   >
                     <div className="flex items-baseline justify-between">
                       <span className="font-display font-bold">{r}</span>
-                      <span className="text-xs text-muted-foreground">{c.length} initiatives</span>
+                      <span className="text-xs text-muted-foreground">{c.length}</span>
                     </div>
                     <div className="mt-2 h-1.5 bg-card rounded-full overflow-hidden">
-                      <div className="h-full bg-ember" style={{ width: `${Math.min(100, (c.length / projects.length) * 100 * 2)}%` }} />
+                      <div className="h-full bg-ember" style={{ width: `${Math.min(100, (c.length / Math.max(projects.length, 1)) * 100 * 2)}%` }} />
                     </div>
-                    <div className="mt-2 text-xs text-muted-foreground">Annual value <span className="font-num font-semibold text-foreground">${formatShort(value)}</span></div>
+                    <div className="mt-2 text-xs text-muted-foreground">~ <span className="font-num font-semibold text-foreground">${formatShort(value)}</span> / yr</div>
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CATEGORIES */}
-      <section>
-        <SectionHeader eyebrow="Capabilities" title="Transformation Categories" />
-        <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {categories.map((c) => {
-            const list = projects.filter((p) => p.category === c);
-            const value = list.reduce((a, b) => a + b.annualSavings, 0);
-            const Icon = catIcons[c] ?? Sparkles;
-            return (
-              <Link
-                to={`/library?category=${encodeURIComponent(c)}`}
-                key={c}
-                className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-elev-sm hover:shadow-elev-lg transition"
-              >
-                <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-ember opacity-10 blur-2xl group-hover:opacity-20 transition" />
-                <div className="relative">
-                  <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary">
-                    <Icon className="w-5 h-5" />
+        {/* YEAR-WISE INSIGHTS + MINI GANTT — clickable → library */}
+        <section>
+          <SectionHeader eyebrow="Project Insights" title="Year-Wise Portfolio + Timeline" action={
+            <Link to="/gantt" className="text-sm text-primary font-semibold inline-flex items-center gap-1">Full Gantt <ArrowRight className="w-4 h-4" /></Link>
+          } />
+          <div className="mt-6 grid lg:grid-cols-[1.2fr_1fr] gap-6">
+            <div className="grid sm:grid-cols-2 gap-3">
+              {yearInsights.map((y) => (
+                <button
+                  key={y.year}
+                  onClick={() => navigate(`/library?year=${y.year}`)}
+                  className="text-left rounded-2xl border border-border bg-card p-5 shadow-elev-sm hover:shadow-elev-lg hover:border-primary/40 transition group"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Fiscal Year</div>
+                    <CalendarRange className="w-4 h-4 text-muted-foreground group-hover:text-primary transition" />
                   </div>
-                  <div className="mt-4 font-display font-bold">{c}</div>
-                  <div className="mt-3 flex items-baseline gap-2">
-                    <span className="font-num text-2xl font-bold text-gradient">{list.length}</span>
-                    <span className="text-xs text-muted-foreground">initiatives</span>
+                  <div className="mt-1 font-display font-bold text-3xl text-gradient">{y.year}</div>
+                  <div className="mt-3 grid grid-cols-2 gap-3 text-xs">
+                    <Stat label="Projects" value={`${y.count}`} />
+                    <Stat label="Value / yr" value={`$${formatShort(y.value)}`} />
+                    <Stat label="Live" value={`${y.live}`} />
+                    <Stat label="In Progress" value={`${y.inProgress}`} />
                   </div>
-                  <div className="mt-1 text-xs text-muted-foreground">~ <span className="font-num font-semibold text-foreground">${formatShort(value)}</span> / yr</div>
+                  <div className="mt-3 text-[10px] uppercase tracking-widest text-muted-foreground inline-flex items-center gap-1 group-hover:text-primary transition">
+                    Open in library <ArrowRight className="w-3 h-3" />
+                  </div>
+                </button>
+              ))}
+            </div>
+
+            {/* Mini Gantt — monthly active project density for 2026 */}
+            <div className="rounded-2xl border border-border bg-card p-5 shadow-elev-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">FY26 Timeline</div>
+                  <h3 className="font-display font-bold text-lg mt-1">Active Projects per Month</h3>
                 </div>
-              </Link>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* FEATURED */}
-      <section>
-        <SectionHeader eyebrow="Spotlight" title="Featured Initiatives" action={
-          <Link to="/library" className="text-sm text-primary font-semibold inline-flex items-center gap-1">View library <ArrowRight className="w-4 h-4" /></Link>
-        } />
-        <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {featured.map((p, i) => <ProjectCard key={p.id} p={p} index={i} />)}
-        </div>
-      </section>
-
-      {/* INSIGHTS */}
-      <section className="rounded-3xl border border-border bg-card p-8 shadow-elev-md relative overflow-hidden">
-        <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-ember opacity-20 blur-3xl" />
-        <div className="relative grid lg:grid-cols-5 gap-6 items-center">
-          <div className="lg:col-span-3">
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-primary font-semibold">
-              <Sparkles className="w-3.5 h-3.5" /> Executive Insight · Week 23
-            </div>
-            <h3 className="mt-2 font-display text-2xl font-bold leading-tight">
-              The portfolio is now recovering <span className="text-gradient">{portfolioStats.weeklyHoursSaved.toLocaleString()} hours every week</span> — equivalent to {portfolioStats.fteSavings} FTE.
-            </h3>
-            <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
-              AI-led initiatives in EMIA continue to drive the largest share of value, while Automation in AMER is scaling fastest QoQ. Recommend reviewing top-5 high-priority programs for cross-regional rollout in FY27.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-3">
-              <Link to="/strategic" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-ember text-white text-xs font-semibold shadow-ember">
-                Open Strategic Roadmap <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-              <Link to="/gantt" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-card text-xs font-semibold">
-                Portfolio Gantt
-              </Link>
-            </div>
-          </div>
-          <div className="lg:col-span-2 grid grid-cols-2 gap-3">
-            <InsightStat label="On Plan" value="38" unit="initiatives" tone="up" />
-            <InsightStat label="In Discovery" value={`${projects.filter((p) => p.status === "In Discovery").length}`} unit="initiatives" />
-            <InsightStat label="Live" value={`${projects.filter((p) => p.status === "Live").length}`} unit="delivered" tone="up" />
-            <InsightStat label="Scalable" value={`${projects.filter((p) => p.scalable).length}`} unit="cross-region" />
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT US */}
-      <section className="rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md relative overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
-        <div className="relative">
-          <SectionHeader eyebrow="Who We Are" title="About TE AI Transformation Hub" />
-          <div className="mt-6 grid md:grid-cols-3 gap-6">
-            <div className="rounded-2xl border border-border bg-muted/40 p-5">
-              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
-                <Target className="w-5 h-5" />
+                <Link to="/gantt" className="text-xs text-primary font-semibold">Open</Link>
               </div>
-              <h4 className="font-display font-bold text-lg">Our Mission</h4>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                Accelerate enterprise-wide AI, Automation, and Digital Transformation by providing a single operating system for global executives to discover, track, and scale high-impact initiatives across EMIA and AMER.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border bg-muted/40 p-5">
-              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
-                <Zap className="w-5 h-5" />
+              <div className="mt-5 flex items-end gap-1.5 h-40">
+                {ganttBars.map((b) => (
+                  <button
+                    key={b.m}
+                    onClick={() => navigate(`/library?year=2026`)}
+                    className="group flex-1 flex flex-col items-center justify-end gap-1"
+                    title={`${b.active} active`}
+                  >
+                    <span className="text-[10px] font-num text-muted-foreground opacity-0 group-hover:opacity-100">{b.active}</span>
+                    <div
+                      className="w-full rounded-t-md bg-gradient-to-t from-primary/60 to-primary/90 hover:from-primary hover:to-primary transition"
+                      style={{ height: `${(b.active / maxBar) * 100}%` }}
+                    />
+                    <span className="text-[9px] font-mono text-muted-foreground uppercase">{["J","F","M","A","M","J","J","A","S","O","N","D"][b.m]}</span>
+                  </button>
+                ))}
               </div>
-              <h4 className="font-display font-bold text-lg">What We Do</h4>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                We unify portfolio intelligence across SAP BTP, Process Mining, Planning, Analytics, and AI — giving leadership real-time visibility into value, risk, and readiness with boardroom-grade reporting.
-              </p>
-            </div>
-            <div className="rounded-2xl border border-border bg-muted/40 p-5">
-              <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">
-                <Shield className="w-5 h-5" />
-              </div>
-              <h4 className="font-display font-bold text-lg">Why It Matters</h4>
-              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                Decisions at the speed of insight. The Hub transforms scattered project data into a strategic asset — enabling faster funding, smarter staffing, and transparent governance for every transformation dollar.
-              </p>
+              <div className="mt-3 text-xs text-muted-foreground">Click any bar to open the library filtered for 2026.</div>
             </div>
           </div>
-          <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <GlobeIcon className="w-4 h-4 text-primary" />
-              <span>Global · EMIA & AMER</span>
+        </section>
+
+        {/* CATEGORIES */}
+        <section>
+          <SectionHeader eyebrow="Capabilities" title="Transformation Categories" />
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {categories.map((c) => {
+              const list = projects.filter((p) => p.category === c);
+              const value = list.reduce((a, b) => a + b.annualSavings, 0);
+              const Icon = catIcons[c] ?? Sparkles;
+              return (
+                <Link
+                  to={`/library?category=${encodeURIComponent(c)}`}
+                  key={c}
+                  className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-elev-sm hover:shadow-elev-lg transition"
+                >
+                  <div className="absolute -right-12 -top-12 w-40 h-40 rounded-full bg-ember opacity-10 blur-2xl group-hover:opacity-20 transition" />
+                  <div className="relative">
+                    <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div className="mt-4 font-display font-bold">{c}</div>
+                    <div className="mt-3 flex items-baseline gap-2">
+                      <span className="font-num text-2xl font-bold text-gradient">{list.length}</span>
+                      <span className="text-xs text-muted-foreground">initiatives</span>
+                    </div>
+                    <div className="mt-1 text-xs text-muted-foreground">~ <span className="font-num font-semibold text-foreground">${formatShort(value)}</span> / yr</div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* FEATURED */}
+        <section>
+          <SectionHeader eyebrow="Spotlight" title="Featured Initiatives" action={
+            <Link to="/library" className="text-sm text-primary font-semibold inline-flex items-center gap-1">View library <ArrowRight className="w-4 h-4" /></Link>
+          } />
+          <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {featured.map((p, i) => <ProjectCard key={p.id} p={p} index={i} />)}
+          </div>
+        </section>
+
+        {/* ABOUT */}
+        <section className="rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md relative overflow-hidden">
+          <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
+          <div className="relative">
+            <SectionHeader eyebrow="Who We Are" title="About TE AI Transformation Hub" />
+            <div className="mt-6 grid md:grid-cols-3 gap-6">
+              <AboutCard icon={<Target className="w-5 h-5" />} title="Our Mission" body="Accelerate enterprise-wide AI, Automation, and Digital Transformation by providing a single operating system for global executives to discover, track, and scale high-impact initiatives across EMIA, AMER and APAC." />
+              <AboutCard icon={<Zap className="w-5 h-5" />} title="What We Do" body="We unify portfolio intelligence across SAP BTP, Process Mining, Planning, Analytics, and AI — giving leadership real-time visibility into value, risk, and readiness with boardroom-grade reporting." />
+              <AboutCard icon={<Shield className="w-5 h-5" />} title="Why It Matters" body="Decisions at the speed of insight. The Hub transforms scattered project data into a strategic asset — enabling faster funding, smarter staffing, and transparent governance for every transformation dollar." />
             </div>
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-primary" />
-              <span>Multi-functional Teams</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span>AI-First Culture</span>
+            <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+              <span className="flex items-center gap-2"><GlobeIcon className="w-4 h-4 text-primary" />Global · EMIA · AMER · APAC</span>
+              <span className="flex items-center gap-2"><Users className="w-4 h-4 text-primary" />Multi-functional Teams</span>
+              <span className="flex items-center gap-2"><Sparkles className="w-4 h-4 text-primary" />AI-First Culture</span>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
@@ -312,45 +320,21 @@ function SectionHeader({ eyebrow, title, action }: { eyebrow: string; title: str
   );
 }
 
-function ScoreRing({ value }: { value: number }) {
-  const r = 54; const c = 2 * Math.PI * r;
-  const offset = c * (1 - value / 100);
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="relative w-36 h-36">
-      <svg viewBox="0 0 140 140" className="-rotate-90">
-        <circle cx="70" cy="70" r={r} fill="none" stroke="hsl(var(--muted))" strokeWidth="10" />
-        <circle cx="70" cy="70" r={r} fill="none" stroke="url(#ring)" strokeWidth="10" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={offset} />
-        <defs>
-          <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#FF6B00" />
-            <stop offset="1" stopColor="#FFA94D" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-num font-bold text-3xl text-gradient"><AnimatedCounter value={value} /></span>
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">Health</span>
-      </div>
+    <div className="rounded-lg bg-muted/50 border border-border/60 px-3 py-2">
+      <div className="text-[9px] uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className="font-num font-bold text-sm mt-0.5">{value}</div>
     </div>
   );
 }
 
-function PulseRow({ label, value, tone }: { label: string; value: string; tone?: "up" | "neutral" }) {
+function AboutCard({ icon, title, body }: { icon: React.ReactNode; title: string; body: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b border-border/60 pb-1.5">
-      <span className="text-muted-foreground">{label}</span>
-      <span className={`font-num font-semibold ${tone === "up" ? "text-emerald-600" : "text-foreground"}`}>{value}</span>
-    </div>
-  );
-}
-
-function InsightStat({ label, value, unit, tone }: { label: string; value: string; unit: string; tone?: "up" }) {
-  return (
-    <div className="rounded-2xl bg-muted/50 border border-border p-4">
-      <div className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className={`mt-1 font-num font-bold text-2xl ${tone === "up" ? "text-emerald-600" : "text-foreground"}`}>{value}</div>
-      <div className="text-xs text-muted-foreground">{unit}</div>
-      {tone === "up" && <TrendingUp className="w-3.5 h-3.5 text-emerald-500 mt-1" />}
+    <div className="rounded-2xl border border-border bg-muted/40 p-5">
+      <div className="w-10 h-10 rounded-xl bg-ember-soft flex items-center justify-center text-primary mb-3">{icon}</div>
+      <h4 className="font-display font-bold text-lg">{title}</h4>
+      <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{body}</p>
     </div>
   );
 }
