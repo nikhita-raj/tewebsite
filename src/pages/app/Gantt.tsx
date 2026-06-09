@@ -117,15 +117,93 @@ export default function Gantt() {
                   {ticks.map((t, k) => (
                     <div key={k} className="absolute top-0 bottom-0 border-l border-border/40" style={{ left: `${posPct(t.date)}%` }} />
                   ))}
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }} animate={{ width: `${width}%`, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: Math.min(i, 20) * 0.02 }}
-                    className={`absolute top-3 h-8 rounded-lg bg-gradient-to-r ${catColor[p.category]} shadow-elev-sm flex items-center px-3 text-[11px] text-white font-medium`}
-                    style={{ left: `${left}%` }}
-                  >
-                    <span className="truncate">{p.category}</span>
-                    <span className="ml-auto opacity-80 font-num">{p.status}</span>
-                  </motion.div>
+                  <div
+  className="absolute top-3"
+  style={{
+    left: `${left}%`,
+    width: `${width}%`,
+  }}
+>
+  <div className="group relative">
+
+    <motion.div
+      initial={{ width: 0, opacity: 0 }}
+      animate={{ width: "100%", opacity: 1 }}
+      transition={{
+        duration: 0.6,
+        delay: Math.min(i, 20) * 0.02,
+      }}
+      className={`h-8 rounded-lg bg-gradient-to-r ${catColor[p.category]} shadow-elev-sm flex items-center px-3 text-[11px] text-white font-medium cursor-pointer`}
+    >
+      <span className="truncate">{p.category}</span>
+      <span className="ml-auto opacity-80 font-num">
+        {p.status}
+      </span>
+    </motion.div>
+
+    {/* HOVER POPUP */}
+    <div
+      className="
+      invisible
+      group-hover:visible
+      absolute
+      z-50
+      top-10
+      left-0
+      w-80
+      bg-white
+      border
+      border-gray-200
+      rounded-xl
+      shadow-2xl
+      p-4
+      text-black
+      "
+    >
+      <h3 className="font-bold text-lg mb-2">
+        {p.name}
+      </h3>
+
+      <div className="space-y-1 text-sm">
+
+        <p>
+          <strong>Region:</strong> {p.region}
+        </p>
+
+        <p>
+          <strong>Project Manager:</strong> {p.pm}
+        </p>
+
+        <p>
+          <strong>Category:</strong> {p.category}
+        </p>
+
+        <p>
+          <strong>Status:</strong> {p.status}
+        </p>
+
+        <p>
+          <strong>Start:</strong> {p.startDate}
+        </p>
+
+        <p>
+          <strong>End:</strong> {p.endDate}
+        </p>
+
+        <p>
+          <strong>Hours Saved:</strong> {p.weeklyHours}
+        </p>
+
+        <p>
+          <strong>Annual Value:</strong> $
+          {p.annualSavings.toLocaleString()}
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>
                 </div>
               </div>
             );

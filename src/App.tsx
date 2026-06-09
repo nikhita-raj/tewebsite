@@ -6,6 +6,7 @@ import ProjectDetail from "./pages/app/ProjectDetail";
 import Strategic from "./pages/app/Strategic";
 import Gantt from "./pages/app/Gantt";
 import Galaxy from "./pages/app/Galaxy";
+import VPPortal from "./pages/VPPortal";
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/gantt" element={<Gantt />} />
         <Route path="/galaxy" element={<Galaxy />} />
         <Route path="*" element={<Home />} />
+        <Route path="/vp-portal" element={<VPPortal />} />
       </Routes>
     </AppShell>
   );
