@@ -14,7 +14,8 @@ export function Globe({ counts, active, onSelect }: Props) {
   const regions: { id: ProjectRegion; label: string; x: number; y: number }[] = [
     { id: "EMIA", label: "EMIA", x: 180, y: 90 },
     { id: "AMER", label: "AMER", x: 60,  y: 120 },
-    { id: "Global", label: "GLOBAL", x: 230, y: 170 },
+    { id: "APAC", label: "APAC", x: 240, y: 130 },
+    { id: "Global", label: "GLOBAL", x: 150, y: 220 },
   ];
 
   return (
