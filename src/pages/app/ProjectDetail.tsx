@@ -57,8 +57,6 @@ export default function ProjectDetail() {
           <div className="lg:col-span-2 grid grid-cols-2 gap-3">
             <Kpi label="Annual Value" value={<AnimatedCounter value={project.annualSavings} prefix="$" />} accent />
             <Kpi label="Hours / wk" value={<AnimatedCounter value={project.weeklyHours} />} />
-            <Kpi label="FTE Savings" value={<AnimatedCounter value={project.fteSavings} decimals={2} />} />
-            <Kpi label="Scalable" value={project.scalable ? "Yes" : "No"} />
           </div>
         </div>
       </motion.section>
@@ -80,8 +78,6 @@ export default function ProjectDetail() {
         <ul className="space-y-1.5">
           <li>• Annualized value: <strong className="font-num">${project.annualSavings.toLocaleString()}</strong></li>
           {project.weeklyHours > 0 && <li>• Capacity recovered: <strong className="font-num">{(project.weeklyHours * 52).toLocaleString()} hours / yr</strong></li>}
-          <li>• FTE equivalent: <strong className="font-num">{project.fteSavings}</strong></li>
-          <li>• Strategic fit: <strong>{project.scalable ? "Globally scalable" : "Regional"}</strong></li>
         </ul>
       </Story>
 

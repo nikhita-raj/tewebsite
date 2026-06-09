@@ -8,9 +8,9 @@ export default {
     container: { center: true, padding: "1rem", screens: { "2xl": "1400px" } },
     extend: {
       fontFamily: {
-        display: ["Space Grotesk", "sans-serif"],
+        display: ["Arvo", "serif"],
         sub: ["Sora", "sans-serif"],
-        body: ["Inter", "sans-serif"],
+        body: ["Lora", "serif"],
         num: ["IBM Plex Sans", "sans-serif"],
       },
       colors: {

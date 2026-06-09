@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { projects, categories, parseProjectDate, type ProjectCategory, type ProjectStatus, type ProjectPriority } from "@/data/projects";
+import { projects, categories, parseProjectDate, type ProjectCategory, type ProjectStatus, type ProjectPriority, type ProjectRegion } from "@/data/projects";
 import { ProjectCard, CATEGORY_COLOR } from "@/components/ProjectCard";
 
 const statuses: ProjectStatus[] = ["Live", "In Progress", "In Discovery", "Planned"];
 const priorities: ProjectPriority[] = ["Critical", "High", "Medium", "Standard"];
+const regions: ProjectRegion[] = ["EMIA", "AMER", "APAC", "Global"];
 
 type AnyFilter = string;
 
@@ -14,27 +15,18 @@ export default function Library() {
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState("");
   const initialCat = params.get("category") as ProjectCategory | null;
-  const initialYear = params.get("year");
+  const initialRegion = params.get("region") as ProjectRegion | null;
 
   const [cats, setCats] = useState<Set<ProjectCategory>>(new Set(initialCat ? [initialCat] : []));
   const [stats, setStats] = useState<Set<ProjectStatus>>(new Set());
   const [prios, setPrios] = useState<Set<ProjectPriority>>(new Set());
   const [funcs, setFuncs] = useState<Set<string>>(new Set());
-  const [year, setYear] = useState<string | null>(initialYear);
+  const [regs, setRegs] = useState<Set<ProjectRegion>>(new Set(initialRegion ? [initialRegion] : []));
 
   // Build function list (from project area)
   const functions = useMemo(() => {
     const s = new Set<string>();
     projects.forEach((p) => p.area && s.add(p.area));
-    return Array.from(s).sort();
-  }, []);
-
-  const years = useMemo(() => {
-    const s = new Set<number>();
-    projects.forEach((p) => {
-      const d = parseProjectDate(p.startDate) ?? parseProjectDate(p.endDate);
-      if (d) s.add(d.getFullYear());
-    });
     return Array.from(s).sort();
   }, []);
 
@@ -50,29 +42,27 @@ export default function Library() {
       if (stats.size && !stats.has(p.status)) return false;
       if (prios.size && !prios.has(p.priority)) return false;
       if (funcs.size && !funcs.has(p.area)) return false;
-      if (year) {
-        const d = parseProjectDate(p.startDate) ?? parseProjectDate(p.endDate);
-        if (!d || d.getFullYear() !== Number(year)) return false;
-      }
+      if (regs.size && !regs.has(p.region)) return false;
       if (q && !(`${p.name} ${p.pm} ${p.team} ${p.bu} ${p.area}`).toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
-  }, [cats, stats, prios, funcs, year, q]);
+  }, [cats, stats, prios, funcs, regs, q]);
 
-  const activeCount = cats.size + stats.size + prios.size + funcs.size + (year ? 1 : 0);
+  const activeCount = cats.size + stats.size + prios.size + funcs.size + regs.size;
 
   const clearAll = () => {
-    setCats(new Set()); setStats(new Set()); setPrios(new Set()); setFuncs(new Set());
-    setYear(null); setQ(""); setParams({});
+    setCats(new Set()); setStats(new Set()); setPrios(new Set()); setFuncs(new Set()); setRegs(new Set());
+    setQ(""); setParams({});
   };
 
   const counts = useMemo(() => {
-    const acc = { cat: {} as Record<string, number>, st: {} as Record<string, number>, pr: {} as Record<string, number>, fn: {} as Record<string, number> };
+    const acc = { cat: {} as Record<string, number>, st: {} as Record<string, number>, pr: {} as Record<string, number>, fn: {} as Record<string, number>, rg: {} as Record<string, number> };
     projects.forEach((p) => {
       acc.cat[p.category] = (acc.cat[p.category] ?? 0) + 1;
       acc.st[p.status] = (acc.st[p.status] ?? 0) + 1;
       acc.pr[p.priority] = (acc.pr[p.priority] ?? 0) + 1;
       acc.fn[p.area] = (acc.fn[p.area] ?? 0) + 1;
+      acc.rg[p.region] = (acc.rg[p.region] ?? 0) + 1;
     });
     return acc;
   }, []);
@@ -91,35 +81,7 @@ export default function Library() {
         </div>
       </div>
 
-      {/* TOP STATUS-OF-EACH-PROJECT STRIP */}
-      <div className="mb-5 rounded-2xl border border-border bg-card p-4 shadow-elev-sm">
-        <div className="flex items-center justify-between mb-3">
-          <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Status snapshot</div>
-          {year && (
-            <button onClick={() => setYear(null)} className="text-[10px] uppercase tracking-widest text-primary inline-flex items-center gap-1">
-              <X className="w-3 h-3" /> Year: {year}
-            </button>
-          )}
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          {statuses.map((s) => {
-            const list = filtered.filter((p) => p.status === s);
-            const dot = s === "Live" ? "bg-emerald-500" : s === "In Progress" ? "bg-amber-500" : s === "In Discovery" ? "bg-sky-500" : "bg-slate-400";
-            return (
-              <button
-                key={s}
-                onClick={() => toggle(stats, s, setStats)}
-                className={`flex items-center justify-between rounded-xl border px-3 py-2 text-left transition ${stats.has(s) ? "border-primary/40 bg-ember-soft" : "border-border bg-muted/40 hover:bg-muted"}`}
-              >
-                <span className="flex items-center gap-2 text-xs font-medium">
-                  <span className={`h-2 w-2 rounded-full ${dot}`} /> {s}
-                </span>
-                <span className="font-num text-sm font-bold">{list.length}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6">
         {/* LEFT FILTER SIDEBAR */}
@@ -152,6 +114,24 @@ export default function Library() {
               </button>
             )}
           </div>
+
+          <FilterGroup label="Region" count={regs.size}>
+            <div className="flex flex-wrap gap-1.5">
+              {regions.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => toggle(regs, r, setRegs)}
+                  className={`inline-flex items-center gap-1.5 pl-2 pr-2.5 py-1 rounded-full border text-[11px] font-medium transition ${
+                    regs.has(r) ? "text-foreground shadow-elev-sm" : "text-muted-foreground border-border bg-card/60 hover:text-foreground hover:border-primary/30"
+                  }`}
+                  style={regs.has(r) ? { background: `hsl(var(--primary) / 0.08)`, borderColor: `hsl(var(--primary) / 0.4)` } : undefined}
+                >
+                  {r}
+                  <span className="font-num text-[10px] opacity-70">{counts.rg[r] ?? 0}</span>
+                </button>
+              ))}
+            </div>
+          </FilterGroup>
 
           <FilterGroup label="Category" count={cats.size}>
             <div className="flex flex-wrap gap-1.5">
@@ -200,21 +180,7 @@ export default function Library() {
             ))}
           </FilterGroup>
 
-          {years.length > 0 && (
-            <FilterGroup label="Year" count={year ? 1 : 0}>
-              <div className="flex flex-wrap gap-1.5">
-                {years.map((y) => (
-                  <button
-                    key={y}
-                    onClick={() => setYear(year === String(y) ? null : String(y))}
-                    className={`px-2.5 py-1 rounded-full border text-[11px] font-medium font-num transition ${year === String(y) ? "bg-primary/10 text-primary border-primary/40" : "text-muted-foreground border-border bg-card/60 hover:border-primary/30"}`}
-                  >
-                    {y}
-                  </button>
-                ))}
-              </div>
-            </FilterGroup>
-          )}
+
         </aside>
 
         <div>

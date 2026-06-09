@@ -22,28 +22,28 @@ export function Topbar() {
             <div className="absolute inset-0 rounded-xl pulse-ember pointer-events-none" />
           </div>
           <div className="leading-tight hidden lg:block">
-            <div className="font-display font-bold text-xl text-gray-900">
+            <div className="font-display font-bold text-lg text-gray-900">
   TE AI Hub
 </div>
 
-<div className="text-sm uppercase tracking-widest text-gray-800 font-semibold">
+<div className="text-xs uppercase tracking-widest text-gray-800 font-semibold">
   Transformation OS
 </div>
           </div>
         </NavLink>
 
-        <div className="flex items-center gap-2 text-xl text-gray-900 font-medium hidden md:flex">
+        <div className="flex items-center gap-2 text-base text-gray-900 font-medium hidden md:flex">
           <Globe2 className="w-4 h-4 text-primary" />
-          <span className="font-sub">Global Operations</span>
-          <span className="hidden md:inline">·</span>
-          <span className="hidden md:inline">FY26 Portfolio</span>
+          <span className="font-sub text-sm">Global Operations</span>
+          <span className="hidden md:inline text-sm">·</span>
+          <span className="hidden md:inline text-sm">FY26 Portfolio</span>
         </div>
 
       
         <div className="flex items-center gap-2 ml-auto">
           <NavLink
             to="/vp-portal"
-            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xl font-medium bg-red-600 text-white hover:bg-red-700 transition"
+            className="hidden md:inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition"
           >
             <FileDown className="w-3.5 h-3.5" />
             Generate VP Deck
@@ -61,7 +61,7 @@ export function Topbar() {
               to={n.to}
               end={n.to === "/"}
               className={({ isActive }) =>
-  `group relative flex items-center gap-2 px-3 py-1.5 rounded-lg text-xl font-medium whitespace-nowrap transition-all ${
+  `group relative flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
     isActive
       ? "bg-ember-soft text-black shadow-elev-sm"
       : "text-gray-700 hover:text-black hover:bg-muted/60"
