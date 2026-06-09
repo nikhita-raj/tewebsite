@@ -212,6 +212,17 @@ export default function ImplementationRoadmap() {
                                     ? 'hsl(var(--info))'
                                     : 'hsl(var(--muted-foreground))';
 
+                            // Priority color mapping
+                            const priorityColor = 
+                              pwd.project.priority === 'Critical' ? '#ef4444' :
+                              pwd.project.priority === 'High' ? '#f59e0b' :
+                              pwd.project.priority === 'Medium' ? '#3b82f6' :
+                              '#9ca3af';
+
+                            // Max value for scaling bar width (find from all projects in this category)
+                            const maxValue = Math.max(...prjs.map(p => p.project.annualSavings), 100000);
+                            const barWidthPercent = (pwd.project.annualSavings / maxValue) * 100;
+
                             return (
                               <div key={pwd.project.id} className="flex items-center gap-2 group/item">
                                 <div className="w-40 flex-shrink-0">
@@ -219,6 +230,23 @@ export default function ImplementationRoadmap() {
                                     {pwd.project.name}
                                   </p>
                                   <p className="text-[9px] text-muted-foreground truncate">{pwd.project.region}</p>
+                                </div>
+
+                                {/* Value Bar Graph - Priority-colored */}
+                                <div className="w-32 flex-shrink-0 relative h-[28px] bg-muted/30 rounded-md overflow-hidden group/valuebar">
+                                  <div
+                                    className="h-full rounded-md transition-all duration-300 hover:shadow-lg"
+                                    style={{
+                                      background: `linear-gradient(90deg, ${priorityColor}, ${priorityColor}dd)`,
+                                      width: `${barWidthPercent}%`,
+                                      boxShadow: `0 0 8px ${priorityColor}50`,
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 flex items-center justify-start px-2">
+                                    <p className="text-[10px] font-bold text-white opacity-0 group-hover/valuebar:opacity-100 transition-opacity whitespace-nowrap">
+                                      ${formatShort(pwd.project.annualSavings)}
+                                    </p>
+                                  </div>
                                 </div>
 
                                 {/* Gantt bar */}
@@ -240,9 +268,10 @@ export default function ImplementationRoadmap() {
                                   </div>
                                 </div>
 
-                                <div className="w-24 flex-shrink-0 text-right">
-                                  <p className="text-[11px] font-bold text-foreground">${formatShort(pwd.project.annualSavings)}</p>
-                                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{pwd.project.priority}</p>
+                                <div className="w-20 flex-shrink-0 text-right">
+                                  <p className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold" style={{ color: priorityColor }}>
+                                    {pwd.project.priority}
+                                  </p>
                                 </div>
                               </div>
                             );
@@ -271,10 +300,40 @@ export default function ImplementationRoadmap() {
         </div>
       </div>
 
+      {/* PRIORITY LEGEND */}
+      <div className="rounded-3xl border border-border bg-card p-8 shadow-elev-md mb-8">
+        <h2 className="font-display font-bold text-2xl mb-1">Priority Levels</h2>
+        <p className="text-sm text-muted-foreground mb-6">Bar graph colors indicate project priority level</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { priority: 'Critical', color: '#ef4444', description: 'Highest priority initiatives' },
+            { priority: 'High', color: '#f59e0b', description: 'Strategic importance' },
+            { priority: 'Medium', color: '#3b82f6', description: 'Important initiatives' },
+            { priority: 'Standard', color: '#9ca3af', description: 'Routine projects' },
+          ].map(({ priority, color, description }) => (
+            <div key={priority} className="group rounded-xl border border-border/50 p-4 hover:border-primary/30 hover:bg-primary/5 transition-all">
+              <div className="flex items-start gap-3">
+                <div 
+                  className="w-6 h-6 rounded-lg flex-shrink-0 mt-0.5 shadow-sm"
+                  style={{ 
+                    background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+                    boxShadow: `0 0 12px ${color}50`
+                  }} 
+                />
+                <div className="flex-1">
+                  <p className="text-sm font-bold text-foreground">{priority}</p>
+                  <p className="text-[11px] text-muted-foreground font-medium mt-0.5">{description}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* CATEGORY LEGEND */}
       <div className="rounded-3xl border border-border bg-card p-8 shadow-elev-md">
         <h2 className="font-display font-bold text-2xl mb-1">Project Categories</h2>
-        <p className="text-sm text-muted-foreground mb-6">Strategic initiatives organized by capability domain</p>
+        <p className="text-sm text-muted-foreground mb-6">Timeline colors indicate project category</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Object.entries(CATEGORY_COLORS).map(([category, color]) => {
             const count = projectsWithDates.filter((p) => p.project.category === category).length;
