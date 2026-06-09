@@ -7,6 +7,7 @@ import { NeuralHero } from "@/components/hero/NeuralHero";
 import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { Globe } from "@/components/Globe";
 import { ProjectCard, formatShort } from "@/components/ProjectCard";
+import { CyberParticles } from "@/components/CyberParticles";
 import { projects, portfolioStats, categories, type ProjectRegion } from "@/data/projects";
 
 const catIcons: Record<string, React.ComponentType<{ className?: string }>> = {
