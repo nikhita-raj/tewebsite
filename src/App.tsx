@@ -6,7 +6,7 @@ import ProjectDetail from "./pages/app/ProjectDetail";
 import Strategic from "./pages/app/Strategic";
 import Gantt from "./pages/app/Gantt";
 import Galaxy from "./pages/app/Galaxy";
-import ImplementationRoadmap from "./pages/app/ImplementationRoadmap";
+import Pipeline from "./pages/app/Pipeline";
 import VPPortal from "./pages/VPPortal";
 
 export default function App() {
@@ -19,7 +19,7 @@ export default function App() {
         <Route path="/strategic" element={<Strategic />} />
         <Route path="/gantt" element={<Gantt />} />
         <Route path="/galaxy" element={<Galaxy />} />
-        <Route path="/roadmap" element={<ImplementationRoadmap />} />
+        <Route path="/pipeline" element={<Pipeline />} />
         <Route path="*" element={<Home />} />
         <Route path="/vp-portal" element={<VPPortal />} />
       </Routes>

@@ -213,32 +213,30 @@ export default function Home() {
 
         
 
-      {/* IMPLEMENTATION ROADMAP */}
+      {/* PROJECT PIPELINE */}
       <section className="rounded-3xl border border-border bg-card p-8 shadow-elev-md">
         <SectionHeader
-          eyebrow="Strategic Planning"
-          title="Implementation Roadmap"
+          eyebrow="Pipeline Management"
+          title="Project Pipeline"
           action={
-            <Link to="/roadmap" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-sub font-semibold hover:opacity-90">
-              <CalendarRange className="w-4 h-4" /> View Full Roadmap
+            <Link to="/pipeline" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-sub font-semibold hover:opacity-90">
+              <CalendarRange className="w-4 h-4" /> View Full Pipeline
             </Link>
           }
         />
 
-        <p className="text-muted-foreground mt-2 mb-6">44 initiatives mapped across fiscal years with strategic alignment</p>
+        <p className="text-muted-foreground mt-2 mb-6">Track {projects.length} initiatives across pipeline stages from planning through delivery</p>
 
-        {/* Fiscal Year Overview */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-3">
-          <RoadmapFYCard fy="FY25" status="Deployed" color="bg-success/10 border-success/30" />
-          <RoadmapFYCard fy="FY26" status="In Progress" color="bg-warning/10 border-warning/30" />
-          <RoadmapFYCard fy="FY27" status="In Progress" color="bg-warning/10 border-warning/30" />
-          <RoadmapFYCard fy="FY28" status="Pipeline" color="bg-muted border-border" />
-          <RoadmapFYCard fy="FY29" status="Pipeline" color="bg-muted border-border" />
-          <RoadmapFYCard fy="FY30" status="Pipeline" color="bg-muted border-border" />
+        {/* Pipeline Stage Overview */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <PipelineStageCard stage="Pipeline" count={projects.filter(p => p.status === "Planned").length} color="bg-blue-500/10 border-blue-500/30" icon="📋" />
+          <PipelineStageCard stage="Planned" count={projects.filter(p => p.status === "In Discovery").length} color="bg-purple-500/10 border-purple-500/30" icon="📝" />
+          <PipelineStageCard stage="Progress" count={projects.filter(p => p.status === "In Progress").length} color="bg-amber-500/10 border-amber-500/30" icon="⚙️" />
+          <PipelineStageCard stage="UAT" count={projects.filter(p => p.status === "Live").length} color="bg-emerald-500/10 border-emerald-500/30" icon="✓" />
         </div>
 
         <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>Explore the comprehensive timeline with all 44 projects, detailed Gantt visualization, and business metrics</p>
+          <p>View the interactive pipeline board with detailed project cards and stage insights</p>
         </div>
       </section>
 {/* ABOUT TE AI HUB */}
@@ -332,11 +330,13 @@ function AboutCard({ icon, title, body }: { icon: React.ReactNode; title: string
     </div>
   );
 }
-function RoadmapFYCard({ fy, status, color }: { fy: string; status: string; color: string }) {
+function PipelineStageCard({ stage, count, color, icon }: { stage: string; count: number; color: string; icon: string }) {
   return (
     <div className={`rounded-xl border p-4 text-center ${color} shadow-elev-sm`}>
-      <h3 className="font-display font-bold text-lg">{fy}</h3>
-      <p className="text-xs text-muted-foreground mt-1">{status}</p>
+      <p className="text-2xl mb-2">{icon}</p>
+      <h3 className="font-display font-bold text-sm">{stage}</h3>
+      <p className="text-lg font-display font-bold text-foreground mt-1">{count}</p>
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Projects</p>
     </div>
   );
 }
