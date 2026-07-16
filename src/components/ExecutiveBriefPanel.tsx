@@ -34,10 +34,9 @@ export function ExecutiveBriefPanel({ project, onClose }: Props) {
             </header>
 
             <div className="px-6 py-6 space-y-6">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-4">
                 <BriefStat label="Annual Value" value={`$${formatShort(project.annualSavings)}`} />
-                <BriefStat label="Hours / wk" value={project.weeklyHours ? project.weeklyHours.toLocaleString() : "—"} />
-                <BriefStat label="FTE Savings" value={project.fteSavings.toString()} />
+                <BriefStat label="Hours / Week" value={project.weeklyHours ? project.weeklyHours.toLocaleString() : "—"} />
               </div>
 
               <Section icon={<Target className="w-4 h-4" />} title="Business Problem">

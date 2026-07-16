@@ -18,11 +18,11 @@ const STATUS_MAPPING: Record<PipelineStatus, ProjectStatus[]> = {
   UAT: ["Live"],
 };
 
-const STATUS_CONFIG: Record<PipelineStatus, { color: string; icon: string; bg: string; border: string }> = {
-  Pipeline: { color: "#3b82f6", icon: "📋", bg: "from-blue-500/10 to-blue-500/5", border: "border-blue-500/30" },
-  Planned: { color: "#8b5cf6", icon: "📝", bg: "from-purple-500/10 to-purple-500/5", border: "border-purple-500/30" },
-  Progress: { color: "#f59e0b", icon: "⚙️", bg: "from-amber-500/10 to-amber-500/5", border: "border-amber-500/30" },
-  UAT: { color: "#10b981", icon: "✓", bg: "from-emerald-500/10 to-emerald-500/5", border: "border-emerald-500/30" },
+const STATUS_CONFIG: Record<PipelineStatus, { color: string; icon: string; bg: string; border: string; gradientClass: string }> = {
+  Pipeline: { color: "#3b82f6", icon: "📋", bg: "from-blue-600/15 to-cyan-500/10", border: "border-blue-400/50", gradientClass: "from-blue-500 to-cyan-400" },
+  Planned: { color: "#8b5cf6", icon: "📝", bg: "from-purple-600/15 to-pink-500/10", border: "border-purple-400/50", gradientClass: "from-purple-500 to-pink-400" },
+  Progress: { color: "#f59e0b", icon: "⚙️", bg: "from-amber-600/15 to-orange-500/10", border: "border-amber-400/50", gradientClass: "from-amber-500 to-orange-400" },
+  UAT: { color: "#10b981", icon: "✓", bg: "from-emerald-600/15 to-teal-500/10", border: "border-emerald-400/50", gradientClass: "from-emerald-500 to-teal-400" },
 };
 
 
@@ -304,20 +304,25 @@ export default function Home() {
 
             return (
               <motion.div key={stage} variants={columnVariants}>
-                {/* Column Header */}
-                <div className={`rounded-t-2xl bg-gradient-to-r ${config.bg} ${config.border} border p-4 mb-1`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-2xl">{config.icon}</span>
-                    <h2 className="font-display font-bold text-lg" style={{ color: config.color }}>
+                {/* Column Header - 3D Enhanced */}
+                <div className={`rounded-t-2xl bg-gradient-to-br ${config.bg} ${config.border} border-2 p-5 mb-1 relative overflow-hidden group`}>
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className={`absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-bl ${config.gradientClass} rounded-full blur-3xl opacity-30`} />
+                  </div>
+                  <div className="relative z-10 flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${config.gradientClass} flex items-center justify-center text-2xl shadow-lg`}>
+                      {config.icon}
+                    </div>
+                    <h2 className="font-display font-bold text-xl" style={{ background: `linear-gradient(135deg, ${config.color}, #ffffff)`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
                       {stage}
                     </h2>
                   </div>
-                  <p className="text-2xl font-display font-bold text-foreground">{stageProjects.length}</p>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Projects</p>
+                  <p className="text-3xl font-display font-black text-foreground">{stageProjects.length}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground/80 font-semibold mt-1">Initiatives</p>
                 </div>
 
                 {/* Column Content - Scrollable */}
-                <div className={`rounded-b-2xl ${config.border} border-x border-b p-4 bg-card/50 flex flex-col max-h-[500px]`}>
+                <div className={`rounded-b-2xl ${config.border} border-x-2 border-b-2 p-4 bg-gradient-to-b from-white/40 to-white/20 backdrop-blur flex flex-col max-h-[500px] shadow-lg`}>
                   {/* All Project Cards - Scrollable Container */}
                   <div className="flex-1 overflow-y-auto space-y-3 pr-2">
                     {stageProjects.length > 0 ? (
@@ -325,21 +330,28 @@ export default function Home() {
                         <motion.div
                           key={project.id}
                           variants={cardVariants}
-                          whileHover="hover"
+                          whileHover={{ y: -3, scale: 1.02 }}
                           custom={idx}
-                          className="rounded-lg border border-border bg-card p-3 cursor-pointer transition-all hover:border-primary/50 flex-shrink-0"
+                          className={`relative rounded-lg border-2 ${config.border} bg-gradient-to-br from-white/60 to-white/30 backdrop-blur p-3 cursor-pointer transition-all group overflow-hidden flex-shrink-0`}
                         >
-                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
-                            {project.category}
-                          </p>
-                          <p className="text-xs font-semibold text-foreground line-clamp-2 mb-2">{project.name}</p>
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-[10px] font-mono text-muted-foreground truncate">{project.region}</span>
-                            <span className="text-xs font-bold text-primary flex-shrink-0">${formatShort(project.annualSavings)}</span>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <div className={`absolute -top-1/2 -right-1/2 w-full h-full bg-gradient-to-bl ${config.gradientClass} rounded-full blur-2xl opacity-20`} />
                           </div>
-                          <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between">
-                            <span className="text-[9px] text-muted-foreground font-medium">{project.priority}</span>
-                            <span className="text-[9px] text-muted-foreground">{project.status}</span>
+                          <div className="relative z-10">
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-[9px] uppercase tracking-widest font-bold text-foreground/60">{project.category}</p>
+                              <span className={`inline-block px-2 py-0.5 rounded text-[8px] font-bold text-white bg-gradient-to-r ${config.gradientClass}`}>
+                                {project.priority[0]}
+                              </span>
+                            </div>
+                            <p className="text-xs font-semibold text-foreground line-clamp-2 mb-2 leading-tight">{project.name}</p>
+                            <div className="flex items-center justify-between gap-1 mb-2">
+                              <span className="text-[9px] font-mono text-muted-foreground/70 truncate flex-1">{project.region}</span>
+                              <span className="text-xs font-bold text-foreground flex-shrink-0">${formatShort(project.annualSavings)}</span>
+                            </div>
+                            <div className="h-1 bg-white/30 rounded-full overflow-hidden">
+                              <div className={`h-full bg-gradient-to-r ${config.gradientClass}`} style={{ width: `${Math.min(100, (project.annualSavings / 500000) * 100)}%` }} />
+                            </div>
                           </div>
                         </motion.div>
                       ))
@@ -461,12 +473,26 @@ export default function Home() {
 
 function Kpi({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: React.ReactNode; accent?: boolean }) {
   return (
-    <div className={`relative rounded-2xl p-4 border ${accent ? "border-primary/30 bg-ember-soft" : "border-border bg-card"} shadow-elev-sm overflow-hidden`}>
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-        <span>{label}</span><span className="text-primary">{icon}</span>
+    <motion.div
+      whileHover={{ y: -6, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className={`relative rounded-xl p-5 border backdrop-blur-sm transition-all duration-300 ${
+        accent
+          ? "bg-gradient-to-br from-blue-500/20 to-purple-500/10 border-blue-400/40 shadow-glow-blue hover:shadow-glow-purple"
+          : "bg-gradient-to-br from-white/40 to-white/20 border-white/30 shadow-lg hover:shadow-xl"
+      } overflow-hidden group`}
+    >
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-3xl" />
       </div>
-      <div className="mt-2 font-display font-bold text-2xl lg:text-3xl text-foreground">{value}</div>
-    </div>
+      <div className="relative z-10 flex items-center justify-between mb-3">
+        <span className="text-[9px] uppercase tracking-[0.15em] font-bold text-foreground/70">{label}</span>
+        <span className="text-xl text-blue-400 drop-shadow-lg">{icon}</span>
+      </div>
+      <div className="relative z-10 font-display font-bold text-3xl lg:text-4xl bg-gradient-to-r from-foreground via-blue-600 to-purple-600 bg-clip-text text-transparent">
+        {value}
+      </div>
+    </motion.div>
   );
 }
 
