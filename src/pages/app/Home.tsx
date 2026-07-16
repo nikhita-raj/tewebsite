@@ -316,43 +316,44 @@ export default function Home() {
                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold">Projects</p>
                 </div>
 
-                {/* Column Content */}
-                <div className={`rounded-b-2xl ${config.border} border-x border-b p-4 bg-card/50 min-h-[300px] space-y-3`}>
-                  {/* Sample Project Cards */}
-                  {stageProjects.slice(0, visibleCount).map((project, idx) => (
-                    <motion.div
-                      key={project.id}
-                      variants={cardVariants}
-                      whileHover="hover"
-                      custom={idx}
-                      className="rounded-lg border border-border bg-card p-3 cursor-pointer transition-all"
-                    >
-                      <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
-                        {project.category}
-                      </p>
-                      <p className="text-xs font-semibold text-foreground line-clamp-2 mb-2">{project.name}</p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-mono text-muted-foreground">{project.region}</span>
-                        <span className="text-xs font-bold text-primary">${formatShort(project.annualSavings)}</span>
+                {/* Column Content - Scrollable */}
+                <div className={`rounded-b-2xl ${config.border} border-x border-b p-4 bg-card/50 flex flex-col max-h-[500px]`}>
+                  {/* All Project Cards - Scrollable Container */}
+                  <div className="flex-1 overflow-y-auto space-y-3 pr-2">
+                    {stageProjects.length > 0 ? (
+                      stageProjects.map((project, idx) => (
+                        <motion.div
+                          key={project.id}
+                          variants={cardVariants}
+                          whileHover="hover"
+                          custom={idx}
+                          className="rounded-lg border border-border bg-card p-3 cursor-pointer transition-all hover:border-primary/50 flex-shrink-0"
+                        >
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
+                            {project.category}
+                          </p>
+                          <p className="text-xs font-semibold text-foreground line-clamp-2 mb-2">{project.name}</p>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] font-mono text-muted-foreground truncate">{project.region}</span>
+                            <span className="text-xs font-bold text-primary flex-shrink-0">${formatShort(project.annualSavings)}</span>
+                          </div>
+                          <div className="mt-2 pt-2 border-t border-border/30 flex items-center justify-between">
+                            <span className="text-[9px] text-muted-foreground font-medium">{project.priority}</span>
+                            <span className="text-[9px] text-muted-foreground">{project.status}</span>
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center h-24 text-muted-foreground">
+                        <p className="text-sm">No projects in this stage</p>
                       </div>
-                    </motion.div>
-                  ))}
+                    )}
+                  </div>
 
-                  {/* Show More Button */}
-                  {remainingCount > 0 && (
-                    <motion.div
-                      variants={cardVariants}
-                      whileHover={{ scale: 1.02 }}
-                      className="rounded-lg border-2 border-dashed border-border p-3 text-center cursor-pointer hover:border-primary/50 transition-colors"
-                    >
-                      <p className="text-sm font-bold text-foreground">+{remainingCount} More</p>
-                    </motion.div>
-                  )}
-
-                  {/* Total Value */}
-                  <div className="mt-auto pt-3 border-t border-border/50">
+                  {/* Total Value Footer */}
+                  <div className="sticky bottom-0 mt-4 pt-3 border-t border-border/50 bg-gradient-to-t from-card/80 to-card/0">
                     <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-semibold mb-1">
-                      Total Value
+                      Stage Total
                     </p>
                     <p className="text-lg font-display font-bold text-foreground">
                       ${formatShort(stageProjects.reduce((acc, p) => acc + p.annualSavings, 0))}
