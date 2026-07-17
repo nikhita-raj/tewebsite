@@ -32,22 +32,22 @@ export default function Galaxy() {
   const points = useMemo(() => projects.map((p) => ({ p, ...score(p) })), []);
 
   return (
-    <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
+    <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto dark-zone">
       <header className="mb-6">
-        <div className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold flex items-center gap-2">
+        <div className="text-[10px] uppercase tracking-[0.2em] text-blue-400 font-semibold flex items-center gap-2">
           <Grid3x3 className="w-3.5 h-3.5" /> Gartner Quadrant
         </div>
-        <h1 className="font-display font-bold text-2xl mt-1">Magic Quadrant — Portfolio Positioning</h1>
-        <p className="text-muted-foreground mt-1 text-xs max-w-2xl">
+        <h1 className="font-display font-bold text-3xl mt-1 text-white">Magic Quadrant — Portfolio Positioning</h1>
+        <p className="text-cyan-200/70 mt-2 text-sm max-w-2xl">
           Each initiative plotted by Ability to Execute (X-axis) and Completeness of Vision (Y-axis). Leaders sit top-right.
         </p>
       </header>
 
-      <div className="rounded-3xl border border-border bg-card p-5 shadow-elev-md">
-        <div className="flex items-center gap-3 mb-4 flex-wrap text-[11px]">
+      <div className="rounded-3xl border border-cyan-500/40 bg-slate-900/80 backdrop-blur p-6 shadow-lg" style={{ boxShadow: "0 0 40px rgba(34, 211, 238, 0.2)" }}>
+        <div className="flex items-center gap-3 mb-6 flex-wrap text-[11px]">
           {Object.entries(catColor).map(([k, c]) => (
-            <span key={k} className="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border/50 bg-muted/30">
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: `hsl(${c})` }} /> <span className="font-medium">{k}</span>
+            <span key={k} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-cyan-500/50 bg-cyan-500/10 hover:bg-cyan-500/20 transition-colors">
+              <span className="w-2 h-2 rounded-full" style={{ background: `hsl(${c})`, boxShadow: `0 0 8px hsl(${c})` }} /> <span className="font-semibold text-cyan-200">{k}</span>
             </span>
           ))}
         </div>
@@ -62,12 +62,12 @@ export default function Galaxy() {
           </div>
 
           {/* axis lines */}
-          <div className="absolute left-2 top-2 bottom-2 w-px bg-border" />
-          <div className="absolute left-2 right-2 bottom-2 h-px bg-border" />
-          <div className="absolute left-1/2 top-2 bottom-2 w-px bg-border/40 border-l border-dashed border-border" />
-          <div className="absolute left-2 right-2 top-1/2 h-px bg-border/40 border-t border-dashed border-border" />
-          <div className="absolute -left-1 top-1/2 -translate-y-1/2 text-[9px] uppercase tracking-widest text-muted-foreground/60 font-mono -rotate-90 origin-right" style={{ right: "100%", whiteSpace: "nowrap" }}>Vision</div>
-          <div className="absolute bottom-1 left-1/2 text-[9px] uppercase tracking-widest text-muted-foreground/60 font-mono">Execution</div>
+          <div className="absolute left-2 top-2 bottom-2 w-px bg-cyan-500/40" />
+          <div className="absolute left-2 right-2 bottom-2 h-px bg-cyan-500/40" />
+          <div className="absolute left-1/2 top-2 bottom-2 w-px bg-purple-500/20 border-l border-dashed border-purple-500/30" />
+          <div className="absolute left-2 right-2 top-1/2 h-px bg-purple-500/20 border-t border-dashed border-purple-500/30" />
+          <div className="absolute -left-1 top-1/2 -translate-y-1/2 text-[9px] uppercase tracking-widest text-cyan-300/70 font-mono -rotate-90 origin-right font-semibold" style={{ right: "100%", whiteSpace: "nowrap" }}>Vision</div>
+          <div className="absolute bottom-1 left-1/2 text-[9px] uppercase tracking-widest text-cyan-300/70 font-mono font-semibold">Execution</div>
 
           {/* points */}
           {points.map(({ p, x, y }, i) => (
@@ -97,21 +97,21 @@ export default function Galaxy() {
         </div>
 
         {/* tooltip / detail */}
-        <div className="mt-6 min-h-[72px] rounded-xl border border-border bg-muted/30 p-4 flex items-center gap-4">
+        <div className="mt-6 min-h-[80px] rounded-xl border border-purple-500/40 bg-purple-900/30 backdrop-blur p-4 flex items-center gap-4" style={{ boxShadow: "0 0 20px rgba(168, 85, 247, 0.1)" }}>
           {hover ? (
             <>
-              <span className="w-3 h-3 rounded-full" style={{ background: `hsl(${catColor[hover.category]})` }} />
+              <span className="w-4 h-4 rounded-full" style={{ background: `hsl(${catColor[hover.category]})`, boxShadow: `0 0 12px hsl(${catColor[hover.category]})` }} />
               <div className="flex-1 min-w-0">
-                <div className="font-display font-bold truncate">{hover.name}</div>
-                <div className="text-xs text-muted-foreground">{hover.category} · {hover.region} · {hover.status} · {hover.pm}</div>
+                <div className="font-display font-bold truncate text-white text-lg">{hover.name}</div>
+                <div className="text-xs text-cyan-200/70 mt-1">{hover.category} · {hover.region} · {hover.status} · {hover.pm}</div>
               </div>
               <div className="text-right">
-                <div className="font-num font-bold">${formatShort(hover.annualSavings)}</div>
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground">value / yr</div>
+                <div className="font-num font-bold text-white text-xl">${formatShort(hover.annualSavings)}</div>
+                <div className="text-[10px] uppercase tracking-widest text-cyan-300/60 font-semibold">value / yr</div>
               </div>
             </>
           ) : (
-            <span className="text-sm text-muted-foreground inline-flex items-center gap-2"><Info className="w-4 h-4" /> Hover any point to inspect; click to open the project.</span>
+            <span className="text-sm text-cyan-200/70 inline-flex items-center gap-2"><Info className="w-4 h-4" /> Hover any point to inspect; click to open the project.</span>
           )}
         </div>
       </div>
@@ -120,16 +120,16 @@ export default function Galaxy() {
 }
 
 function Quadrant({ title, subtitle, align, highlight }: { title: string; subtitle: string; align: "tl" | "tr" | "bl" | "br"; highlight?: boolean }) {
-  const pad = "p-3";
+  const pad = "p-4";
   const pos = align === "tl" ? "items-start justify-start text-left" :
               align === "tr" ? "items-start justify-end text-right" :
               align === "bl" ? "items-end justify-start text-left" :
                                "items-end justify-end text-right";
   return (
-    <div className={`relative border border-border/50 ${pad} flex ${pos} ${highlight ? "bg-ember-soft/60" : "bg-muted/15"}`}>
+    <div className={`relative border ${pad} flex ${pos} ${highlight ? "border-green-500/60 bg-green-900/20" : "border-cyan-500/30 bg-slate-800/30"}`}>
       <div>
-        <div className="text-[9px] uppercase tracking-[0.15em] text-primary font-semibold">{title}</div>
-        <div className="text-[10px] text-muted-foreground leading-tight">{subtitle}</div>
+        <div className={`text-[10px] uppercase tracking-[0.15em] font-bold ${highlight ? "text-green-300" : "text-cyan-300"}`}>{title}</div>
+        <div className={`text-[10px] leading-tight mt-1 ${highlight ? "text-green-200/70" : "text-cyan-200/60"}`}>{subtitle}</div>
       </div>
     </div>
   );

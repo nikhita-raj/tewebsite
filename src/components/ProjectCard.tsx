@@ -51,21 +51,30 @@ export function ProjectCard({ p, index = 0 }: { p: Project; index?: number }) {
         <div className={`relative overflow-hidden rounded-2xl bg-card border border-border p-5 shadow-elev-sm hover:shadow-elev-lg transition-all duration-300 ${priorityRing[p.priority]}`}>
           {/* hover aurora */}
           <div className={`absolute -inset-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${catGlow[p.category] ?? ""} pointer-events-none`} />
-          {/* video-preview surrogate strip */}
-          <div className={`relative h-24 -mx-5 -mt-5 mb-4 overflow-hidden ${catStrip[p.category] ?? ""}`}>
-            <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `hsl(var(--${CATEGORY_COLOR[p.category]}))` }} />
-            <div className="absolute inset-0 grid-pattern opacity-50" />
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/10" />
-            <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground">
+          {/* video-preview surrogate strip with optional image */}
+          <div className={`relative h-32 -mx-5 -mt-5 mb-4 overflow-hidden ${catStrip[p.category] ?? ""}`}>
+            {p.image ? (
+              <>
+                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              </>
+            ) : (
+              <>
+                <div className="absolute top-0 left-0 right-0 h-1" style={{ background: `hsl(var(--${CATEGORY_COLOR[p.category]}))` }} />
+                <div className="absolute inset-0 grid-pattern opacity-50" />
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/10" />
+              </>
+            )}
+            <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-white drop-shadow">
               <span className={`h-1.5 w-1.5 rounded-full ${statusColor[p.status] ?? "bg-slate-400"}`} />
               {p.status}
             </div>
             <div className="absolute top-3 right-3 text-[10px] px-2 py-0.5 rounded-full bg-card/80 backdrop-blur border border-border text-foreground font-medium">
               {p.category}
             </div>
-            <div className="absolute bottom-2 left-3 right-3 flex items-end justify-between">
-              <div className="font-display text-xs text-muted-foreground">#{p.id.padStart(3, "0")} · {p.bu}</div>
-              <div className="text-[10px] uppercase tracking-widest text-primary font-semibold opacity-0 group-hover:opacity-100 transition">{p.priority}</div>
+            <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+              <div className="font-display text-xs text-white drop-shadow">#{p.id.padStart(3, "0")} · {p.bu}</div>
+              <div className="text-[10px] uppercase tracking-widest text-primary font-semibold opacity-0 group-hover:opacity-100 transition drop-shadow">{p.priority}</div>
             </div>
           </div>
 

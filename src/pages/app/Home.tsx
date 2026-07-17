@@ -7,6 +7,7 @@ import { AnimatedCounter } from "@/components/AnimatedCounter";
 import { Globe } from "@/components/Globe";
 import { formatShort } from "@/components/ProjectCard";
 import { CyberParticles } from "@/components/CyberParticles";
+import { GartnerQuadrant } from "@/components/GartnerQuadrant";
 import { projects, portfolioStats, parseProjectDate, type ProjectRegion, type ProjectStatus } from "@/data/projects";
 
 type PipelineStatus = "Pipeline" | "Planned" | "Progress" | "UAT";
@@ -421,8 +422,21 @@ export default function Home() {
           })}
         </motion.div>
       </section>
+
+      {/* GARTNER QUADRANT SECTION */}
+      <section className="mt-10">
+        <div className="mb-6">
+          <div className="text-[10px] uppercase tracking-[0.2em] text-cyan-400 font-semibold flex items-center gap-2 mb-2">
+            <Grid3x3 className="w-4 h-4" /> Portfolio Analysis
+          </div>
+          <h2 className="font-display font-bold text-3xl text-foreground">Magic Quadrant Positioning</h2>
+          <p className="text-muted-foreground mt-2 text-sm max-w-2xl">Strategic positioning of all initiatives based on execution capability and vision completeness.</p>
+        </div>
+        <GartnerQuadrant compact={false} />
+      </section>
+
 {/* ABOUT TE AI HUB */}
-<section className="rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md">
+<section className="mt-10 rounded-3xl border border-border bg-card p-8 lg:p-10 shadow-elev-md">
   <SectionHeader
     eyebrow="Who We Are"
     title="About TE AI Transformation Hub"

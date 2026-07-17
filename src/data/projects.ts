@@ -9,6 +9,7 @@ export interface Project {
   weeklyHours: number; annualSavings: number; fteSavings: number;
   startDate: string | null; endDate: string | null; status: ProjectStatus; priority: ProjectPriority;
   scalable: boolean; brdStatus: string; fddStatus: string;
+  image?: string; // URL to project image
 }
 
 /**
@@ -67,7 +68,8 @@ const rawProjects: Project[] = [
     "priority": "High",
     "scalable": true,
     "brdStatus": "Done",
-    "fddStatus": "Done"
+    "fddStatus": "Done",
+    "image": "/projects/ai-vision.png"
   },
   {
     "id": "2",
@@ -87,7 +89,8 @@ const rawProjects: Project[] = [
     "priority": "High",
     "scalable": true,
     "brdStatus": "Ready",
-    "fddStatus": "In Progress"
+    "fddStatus": "In Progress",
+    "image": "/projects/automation-workflow.png"
   },
   {
     "id": "3",
