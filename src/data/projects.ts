@@ -94,7 +94,7 @@ const rawProjects: Project[] = [
   },
   {
     "id": "3",
-    "name": "Polaris",
+    "name": "Protos Sequence Planning Optimization",
     "pm": "Allaudin",
     "region": "AMER",
     "bu": "AUT",
@@ -110,7 +110,8 @@ const rawProjects: Project[] = [
     "priority": "Critical",
     "scalable": true,
     "brdStatus": "In Progress",
-    "fddStatus": "In Progress"
+    "fddStatus": "In Progress",
+    "image": "/projects/optimization.png"
   },
   {
     "id": "4",
@@ -130,7 +131,8 @@ const rawProjects: Project[] = [
     "priority": "Medium",
     "scalable": true,
     "brdStatus": "Done",
-    "fddStatus": "Done"
+    "fddStatus": "Done",
+    "image": "/projects/data-processing.png"
   },
   {
     "id": "5",
@@ -150,7 +152,8 @@ const rawProjects: Project[] = [
     "priority": "Standard",
     "scalable": true,
     "brdStatus": "Done",
-    "fddStatus": "Done"
+    "fddStatus": "Done",
+    "image": "/projects/analytics-dashboard.png"
   },
   {
     "id": "6",
@@ -170,7 +173,8 @@ const rawProjects: Project[] = [
     "priority": "Medium",
     "scalable": true,
     "brdStatus": "Approved by Laura- confirmed by Aneesh and Nishanth",
-    "fddStatus": "02/24 - BRD submitted to ADITRAC"
+    "fddStatus": "02/24 - BRD submitted to ADITRAC",
+    "image": "/projects/digital-transform.png"
   },
   {
     "id": "7",
@@ -190,7 +194,8 @@ const rawProjects: Project[] = [
     "priority": "Medium",
     "scalable": true,
     "brdStatus": "3rd Feb BRD Approved by Laura",
-    "fddStatus": "02/10 - BRD submitted to ADITRAC"
+    "fddStatus": "02/10 - BRD submitted to ADITRAC",
+    "image": "/projects/supply-chain.png"
   },
   {
     "id": "8",
