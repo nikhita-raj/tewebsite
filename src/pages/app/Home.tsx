@@ -127,22 +127,22 @@ export default function Home() {
   return (
     <div className="space-y-16">
       {/* DARK HERO ZONE — only this part keeps the cyberpunk vibe */}
-      <div className="bg-white">
+      <div className="bg-slate-950">
         <div className="w-full px-6 lg:px-10">
           
             
 
-          <section className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
-            <div className="absolute inset-0 cyber-grid opacity-30" />
-            <CyberParticles density={100} />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80 pointer-events-none" />
+          <section className="relative overflow-hidden rounded-2xl border border-cyan-500/40 bg-slate-900 shadow-2xl" style={{ boxShadow: "0 0 60px rgba(34, 211, 238, 0.15)" }}>
+            <div className="absolute inset-0 cyber-grid opacity-20" />
+            <CyberParticles density={80} />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90 pointer-events-none" />
             <NeuralHero />
             <div className="relative z-10 px-8 pt-10 pb-8">
               <motion.div
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-primary font-semibold"
+                className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.25em] text-cyan-400 font-semibold"
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-primary pulse-ember" />
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 pulse-ember" />
                 ▌ LIVE · FY26 PORTFOLIO · EXECUTIVE VIEW
               </motion.div>
 
@@ -157,20 +157,16 @@ export default function Home() {
     text-center
     tracking-tight
     text-white
-    drop-shadow-[0_5px_15px_rgba(255,80,80,0.5)]
+    drop-shadow-[0_5px_30px_rgba(34,211,238,0.6)]
   "
   style={{
     textShadow: `
-      0 1px 0 #ccc,
-      0 2px 0 #c9c9c9,
-      0 3px 0 #bbb,
-      0 4px 0 #b9b9b9,
-      0 5px 0 #aaa,
-      0 6px 1px rgba(0,0,0,.1),
-      0 0 20px rgba(255,70,70,.4),
-      0 0 40px rgba(255,70,70,.3)
+      0 0 10px rgba(34, 211, 238, 0.3),
+      0 0 20px rgba(34, 211, 238, 0.4),
+      0 0 40px rgba(34, 211, 238, 0.3),
+      0 0 80px rgba(6, 182, 212, 0.2)
     `,
-    transform: "perspective(500px) rotateX(10deg)",
+    transform: "perspective(500px) rotateX(5deg)",
   }}
 >
   TE AI Transformation Hub
@@ -185,9 +181,9 @@ export default function Home() {
     ease: "easeInOut",
   }}
 ></motion.h1>
-              <p className="mt-3 font-mono text-sm text-muted-foreground max-w-2xl">
+              <p className="mt-3 font-mono text-sm text-cyan-200/70 max-w-2xl">
                 &gt; the operating system for global AI, automation &amp; digital transformation_
-                <span className="inline-block w-2 h-4 align-middle bg-primary ml-1 flicker" />
+                <span className="inline-block w-2 h-4 align-middle bg-cyan-400 ml-1 flicker" />
               </p>
 
               <motion.div
@@ -229,11 +225,11 @@ export default function Home() {
               </motion.div>
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} className="mt-6 flex flex-wrap gap-3">
-                <Link to="/library" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-ember text-white text-sm font-mono uppercase tracking-wider font-semibold shadow-ember">
+                <Link to="/library" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-sm font-mono uppercase tracking-wider font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all">
                   ► Explore Portfolio
                 </Link>
-                <Link to="/galaxy" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-primary/40 bg-card text-sm font-mono uppercase tracking-wider font-semibold hover:bg-primary/10">
-                  <Grid3x3 className="w-4 h-4 text-primary" /> Gartner Quadrant
+                <Link to="/galaxy" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-cyan-400/60 bg-slate-800/80 text-cyan-300 text-sm font-mono uppercase tracking-wider font-semibold hover:bg-cyan-500/10 hover:border-cyan-300 transition-all">
+                  <Grid3x3 className="w-4 h-4" /> Gartner Quadrant
                 </Link>
               </motion.div>
             </div>
@@ -492,18 +488,18 @@ function Kpi({ icon, label, value, accent }: { icon: React.ReactNode; label: str
       transition={{ duration: 0.3 }}
       className={`relative rounded-xl p-5 border backdrop-blur-sm transition-all duration-300 ${
         accent
-          ? "bg-gradient-to-br from-blue-500/20 to-purple-500/10 border-blue-400/40 shadow-glow-blue hover:shadow-glow-purple"
-          : "bg-gradient-to-br from-white/40 to-white/20 border-white/30 shadow-lg hover:shadow-xl"
+          ? "bg-gradient-to-br from-cyan-500/15 to-blue-500/10 border-cyan-400/50 shadow-lg hover:shadow-xl"
+          : "bg-gradient-to-br from-slate-800/60 to-slate-800/40 border-slate-700/60 shadow-lg hover:shadow-xl"
       } overflow-hidden group`}
     >
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-500/20 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-cyan-500/20 to-transparent rounded-full blur-3xl" />
       </div>
       <div className="relative z-10 flex items-center justify-between mb-3">
-        <span className="text-[9px] uppercase tracking-[0.15em] font-bold text-foreground/70">{label}</span>
-        <span className="text-xl text-blue-400 drop-shadow-lg">{icon}</span>
+        <span className="text-[9px] uppercase tracking-[0.15em] font-bold text-cyan-300/70">{label}</span>
+        <span className="text-xl text-cyan-400 drop-shadow-lg">{icon}</span>
       </div>
-      <div className="relative z-10 font-display font-bold text-3xl lg:text-4xl bg-gradient-to-r from-foreground via-blue-600 to-purple-600 bg-clip-text text-transparent">
+      <div className="relative z-10 font-display font-bold text-3xl lg:text-4xl bg-gradient-to-r from-white via-cyan-300 to-blue-300 bg-clip-text text-transparent">
         {value}
       </div>
     </motion.div>

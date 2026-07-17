@@ -67,8 +67,8 @@ export function CyberParticles({ density = 90, className = "" }: { density?: num
           const dx = p.x - q.x, dy = p.y - q.y;
           const d2 = dx * dx + dy * dy;
           if (d2 < 110 * 110) {
-            const a = (1 - Math.sqrt(d2) / 110) * 0.18 * Math.min(p.z, q.z);
-            ctx.strokeStyle = `hsla(0, 84%, 55%, ${a})`;
+            const a = (1 - Math.sqrt(d2) / 110) * 0.15 * Math.min(p.z, q.z);
+            ctx.strokeStyle = `hsla(186, 100%, 50%, ${a})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
@@ -92,16 +92,16 @@ export function CyberParticles({ density = 90, className = "" }: { density?: num
         if (p.y < -10) p.y = h + 10;
         if (p.y > h + 10) p.y = -10;
 
-        // red core
+        // cyan core
         ctx.beginPath();
         ctx.arc(px, py, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(0, 84%, 60%, ${p.alpha})`;
+        ctx.fillStyle = `hsla(186, 100%, 55%, ${p.alpha})`;
         ctx.fill();
         // soft glow halo
         if (p.z > 0.6) {
           ctx.beginPath();
           ctx.arc(px, py, p.size * 3, 0, Math.PI * 2);
-          ctx.fillStyle = `hsla(0, 84%, 55%, ${p.alpha * 0.08})`;
+          ctx.fillStyle = `hsla(186, 100%, 55%, ${p.alpha * 0.08})`;
           ctx.fill();
         }
       }
